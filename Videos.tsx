@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react'
-import { SectionList, Text, View, StatusBar, StyleSheet } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { SectionList, Text, View, StyleSheet, SafeAreaView } from 'react-native'
+import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
 interface VideoProps {
-  tag_name: string
-  data: [
-    {
-      id: string
-      title: string
-      custom_excerpt: string
-      tag: Tag
-    },
-  ]
+  value: string
+  label: string
+  data: [PostData]
+}
+
+interface PostData {
+  id: string
+  title: string
+  custom_excerpt: string
+  tag: Tag
 }
 
 interface Tag {
@@ -43,6 +45,7 @@ enum PrimaryTagVisibility {
 function VideosScreen() {
   const [data, setData] = useState<VideoProps[]>()
   const [loading, setLoading] = useState(true)
+  const [categories, setCategories] = useState<string[]>([])
   const url =
     'https://ultrasoundguidance.ghost.io/ghost/api/content/posts/?key=83ac49fe05b280e4d7ce44909c&include=tags&filter=tag:hash-procedure&limit=all'
 
@@ -67,7 +70,8 @@ function VideosScreen() {
                 accumulator[tag.name].data.push(postInfo)
               } else {
                 accumulator[tag.name] = {
-                  tag_name: tag.name,
+                  value: tag.name,
+                  label: tag.name,
                   data: [postInfo],
                 }
               }
@@ -78,10 +82,10 @@ function VideosScreen() {
       )
 
       videoData.sort((a, b) => {
-        if (a.tag_name === 'Basics' || b.tag_name === 'Basics') {
+        if (a.value === 'Basics' || b.value === 'Basics') {
           return 2
         }
-        return a.tag_name.localeCompare(b.tag_name)
+        return a.value.localeCompare(b.value)
       })
 
       setData(videoData)
@@ -90,38 +94,61 @@ function VideosScreen() {
     fetchData().catch(console.error)
   }, [])
 
-  const renderSeparator = () => <View style={styles.separator} />
+  const renderItem = ({ item }: { item: PostData }) => {
+    if (categories.includes(item.tag.name) || categories.length === 0) {
+      return (
+        <View style={styles.item}>
+          <Text style={styles.title}>{item.title}</Text>
+        </View>
+      )
+    } else {
+      return <View />
+    }
+  }
+
+  const renderSectionHeader = ({
+    section: { value },
+  }: {
+    section: { value: string }
+  }) => {
+    if (categories.includes(value) || categories.length === 0) {
+      return <Text style={styles.header}>{value}</Text>
+    } else {
+      return <View />
+    }
+  }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
-        <View>
+        <View style={styles.view_container}>
+          <MultipleSelectList
+            setSelected={(val: any) => setCategories(val)}
+            data={data!}
+            save="value"
+            label="Categories"
+          />
           <SectionList
             sections={data!}
-            renderItem={({ item }) => (
-              <View style={styles.item}>
-                <Text style={styles.title}>{item.title}</Text>
-              </View>
-            )}
-            renderSectionHeader={({ section: { tag_name } }) => (
-              <Text style={styles.header}>{tag_name}</Text>
-            )}
-            ItemSeparatorComponent={renderSeparator}
+            renderItem={renderItem}
+            renderSectionHeader={renderSectionHeader}
           />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
-    padding: 16,
     backgroundColor: '#fff',
+  },
+  view_container: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
   item: {
     marginVertical: 8,
@@ -130,10 +157,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     backgroundColor: '#fff',
     fontWeight: 'bold',
-  },
-  separator: {
-    backgroundColor: 'grey',
-    height: 0.5,
   },
   title: {
     fontSize: 24,
