@@ -1,6 +1,16 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
-import { SectionList, Text, View, StyleSheet, SafeAreaView } from 'react-native'
+import {
+  SectionList,
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native'
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
+
+import { RootStackParamList } from './App'
 
 interface VideoProps {
   value: string
@@ -41,8 +51,9 @@ enum PrimaryTagVisibility {
   Internal = 'internal',
   Public = 'public',
 }
+type VideosScreenProps = NativeStackScreenProps<RootStackParamList, 'Videos'>
 
-function VideosScreen() {
+function VideosScreen({ navigation }: VideosScreenProps) {
   const [data, setData] = useState<VideoProps[]>()
   const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState<string[]>([])
@@ -98,7 +109,14 @@ function VideosScreen() {
     if (categories.includes(item.tag.name) || categories.length === 0) {
       return (
         <View style={styles.item}>
-          <Text style={styles.title}>{item.title}</Text>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Video', {
+                postId: item.id,
+              })
+            }>
+            <Text style={styles.title}>{item.title}</Text>
+          </TouchableOpacity>
         </View>
       )
     } else {

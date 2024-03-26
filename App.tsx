@@ -4,11 +4,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 
+import VideoScreen from './Video'
 import VideosScreen from './Videos'
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Home: undefined
   Videos: undefined
+  Video: { postId: string }
 }
 
 type HomeScreenProp = NativeStackScreenProps<RootStackParamList, 'Home'>
@@ -36,6 +38,7 @@ function App() {
         }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Videos" component={VideosScreen} />
+        <Stack.Screen name="Video" component={VideoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
