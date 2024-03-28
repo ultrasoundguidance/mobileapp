@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
-import { RootStackParamList } from './App'
+import { RootStackParamList } from '../../App'
 
 interface VideoProps {
   value: string

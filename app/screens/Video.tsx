@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Video, ResizeMode } from 'expo-av'
-import { useEffect, useRef, useState } from 'react'
-import { Button, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
-import { RootStackParamList } from './App'
+import { RootStackParamList } from '../../App'
 
 type VideoScreenProps = NativeStackScreenProps<RootStackParamList, 'Video'>
 
