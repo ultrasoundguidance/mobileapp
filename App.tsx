@@ -12,8 +12,13 @@ import VideosScreen from './app/screens/Videos'
 
 export type RootStackParamList = {
   Home: undefined
-  Videos: undefined
-  Video: { postId: string }
+  Videos: { type: string }
+  Video: {
+    postTitle: string
+    videoId: string
+    text: string[]
+    thumbNail: string
+  }
   Login: undefined
 }
 
@@ -80,7 +85,16 @@ function App() {
                 options={{ headerRight: LogOutBtn }}
               />
               <Stack.Screen name="Videos" component={VideosScreen} />
-              <Stack.Screen name="Video" component={VideoScreen} />
+              <Stack.Screen
+                name="Video"
+                component={VideoScreen}
+                options={{
+                  animationTypeForReplace: 'push',
+                  headerShown: false,
+                  gestureDirection: 'vertical',
+                  orientation: 'all',
+                }}
+              />
             </>
           ) : (
             <Stack.Screen name="Login" component={LoginScreen} />
