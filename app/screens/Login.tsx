@@ -129,9 +129,12 @@ export default function LoginScreen() {
       Alert.alert('Enter email', 'Email cannot be blank')
     } else {
       axios
-        .post('http://127.0.0.1:3000/validate-email', {
-          email: email.toLowerCase(),
-        })
+        .post(
+          'https://us-central1-ultrasound-guidance.cloudfunctions.net/app/validate-email',
+          {
+            email: email.toLowerCase(),
+          },
+        )
         .then(async response => {
           if (response.data.length > 0) {
             if (response.data[0].status === 'free') {

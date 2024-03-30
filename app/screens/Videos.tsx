@@ -67,9 +67,12 @@ function VideosScreen({ navigation, route }: VideosScreenProps) {
     const tag =
       route.params.type === AtlasTypes.diagnostic ? 'msk' : 'hash-procedure'
     axios
-      .post('http://127.0.0.1:3000/get-published-posts', {
-        tag,
-      })
+      .post(
+        'https://us-central1-ultrasound-guidance.cloudfunctions.net/app/get-published-posts',
+        {
+          tag,
+        },
+      )
       .then(response => {
         const videoData: VideoProps[] = Object.values(
           response.data.reduce((accumulator: any, post: any) => {
