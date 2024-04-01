@@ -8,7 +8,7 @@ import {
 import React, { useState, useEffect } from 'react'
 import { Image, TouchableOpacity, View, Text } from 'react-native'
 
-import { UserContext } from './app/context/AppContext'
+import { MemberDetails, UserContext } from './app/context/AppContext'
 import HomeScreen from './app/screens/Home'
 import LoginScreen from './app/screens/Login'
 import VideoScreen from './app/screens/Video'
@@ -31,13 +31,16 @@ const Stack = createStackNavigator<RootStackParamList>()
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [userData, setUserData] = useState<MemberDetails | undefined>(undefined)
 
   useEffect(() => {
     const getAuthenticated = async () => {
       try {
-        const authenticated = await AsyncStorage.getItem('user_data')
-        if (authenticated) {
+        const userInfo = await AsyncStorage.getItem('user_data')
+        if (userInfo) {
+          const info: MemberDetails = JSON.parse(userInfo)
           setIsLoggedIn(true)
+          setUserData(info)
         }
       } catch (error) {
         console.error(error)
@@ -71,7 +74,7 @@ function App() {
     )
   }
   return (
-    <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+    <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn, userData }}>
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Home"

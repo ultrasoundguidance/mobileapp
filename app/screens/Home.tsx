@@ -3,6 +3,7 @@ import React from 'react'
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
 
 import { RootStackParamList } from '../../App'
+import { useUserContext } from '../context/AppContext'
 
 type HomeScreenProp = StackScreenProps<RootStackParamList, 'Home'>
 
@@ -12,10 +13,13 @@ export enum AtlasTypes {
 }
 
 export default function HomeScreen({ navigation }: HomeScreenProp) {
+  const { userData } = useUserContext()
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <Text style={styles.header}>Welcome Username!</Text>
+        <Text style={styles.header}>
+          Welcome {userData?.name.split(' ')[0]}!
+        </Text>
         <Text>Select which videos to view</Text>
         <TouchableOpacity
           style={styles.btn}
