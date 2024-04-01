@@ -142,7 +142,6 @@ function VideosScreen({ navigation, route }: VideosScreenProps) {
           }, {}),
         )
 
-        console.log(videoData)
         videoData.sort((a, b) => {
           // if (a.value === 'Basics' || b.value === 'Basics') {
           //   return 10000000000000
@@ -150,7 +149,6 @@ function VideosScreen({ navigation, route }: VideosScreenProps) {
           return a.value.localeCompare(b.value)
         })
 
-        console.log(videoData)
         setData(videoData)
         setLoading(false)
       })

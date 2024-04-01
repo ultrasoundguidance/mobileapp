@@ -92,7 +92,6 @@ function App() {
                   animationTypeForReplace: 'push',
                   headerShown: false,
                   gestureDirection: 'vertical',
-                  orientation: 'all',
                 }}
               />
             </>

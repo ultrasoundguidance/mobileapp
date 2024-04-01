@@ -1,16 +1,30 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { Video, ResizeMode } from 'expo-av'
+import {
+  Audio,
+  InterruptionModeIOS,
+  InterruptionModeAndroid,
+  Video,
+  ResizeMode,
+} from 'expo-av'
 import React, { useEffect, useRef, useState } from 'react'
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 import { RootStackParamList } from '../../App'
 
 type VideoScreenProps = NativeStackScreenProps<RootStackParamList, 'Video'>
 
 function VideoScreen({ route }: VideoScreenProps) {
-  const video = useRef(null)
+  const video = useRef<Video>(null)
   const [loading, setLoading] = useState(true)
   const [uri, setUri] = useState<string>('')
+
+  Audio.setAudioModeAsync({
+    allowsRecordingIOS: false,
+    interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+    playsInSilentModeIOS: true,
+    shouldDuckAndroid: true,
+    interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+  })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +52,6 @@ function VideoScreen({ route }: VideoScreenProps) {
         {route.params.postTitle}
       </Text>
       <Text style={{ padding: 10 }}>{route.params.text}</Text>
-
       <View style={styles.videoContainer}>
         <Video
           ref={video}
@@ -50,7 +63,6 @@ function VideoScreen({ route }: VideoScreenProps) {
           resizeMode={ResizeMode.CONTAIN}
           shouldPlay
           usePoster
-          posterStyle={{ height: 210, width: 'auto' }}
           posterSource={{ uri: route.params.thumbNail }}
         />
       </View>
@@ -61,20 +73,15 @@ function VideoScreen({ route }: VideoScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    alignItems: 'center',
   },
   videoContainer: {
     flex: 1,
-    padding: 10,
   },
   video: {
-    width: 'auto',
-    height: 210,
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').width * (9 / 16),
   },
 })
+
 export default VideoScreen
