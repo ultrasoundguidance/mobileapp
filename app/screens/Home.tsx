@@ -1,10 +1,10 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { StackScreenProps } from '@react-navigation/stack'
 import React from 'react'
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
 
 import { RootStackParamList } from '../../App'
 
-type HomeScreenProp = NativeStackScreenProps<RootStackParamList, 'Home'>
+type HomeScreenProp = StackScreenProps<RootStackParamList, 'Home'>
 
 export enum AtlasTypes {
   diagnostic = 'Diagnostic Atlas',

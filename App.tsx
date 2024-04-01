@@ -1,6 +1,10 @@
+import 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack'
 import React, { useState, useEffect } from 'react'
 import { Image, TouchableOpacity, View, Text } from 'react-native'
 
@@ -22,7 +26,7 @@ export type RootStackParamList = {
   Login: undefined
 }
 
-const Stack = createNativeStackNavigator<RootStackParamList>()
+const Stack = createStackNavigator<RootStackParamList>()
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
@@ -89,9 +93,11 @@ function App() {
                 name="Video"
                 component={VideoScreen}
                 options={{
-                  animationTypeForReplace: 'push',
                   headerShown: false,
                   gestureDirection: 'vertical',
+                  cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+                  gestureEnabled: true,
+                  // animationEnabled: true,
                 }}
               />
             </>

@@ -1,4 +1,4 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import { Image } from 'expo-image'
 import React, { useEffect, useState } from 'react'
@@ -55,7 +55,7 @@ enum PrimaryTagVisibility {
   Internal = 'internal',
   Public = 'public',
 }
-type VideosScreenProps = NativeStackScreenProps<RootStackParamList, 'Videos'>
+type VideosScreenProps = StackScreenProps<RootStackParamList, 'Videos'>
 
 function VideosScreen({ navigation, route }: VideosScreenProps) {
   const [data, setData] = useState<VideoProps[]>()

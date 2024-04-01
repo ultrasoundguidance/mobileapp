@@ -1,4 +1,4 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { StackScreenProps } from '@react-navigation/stack'
 import {
   Audio,
   InterruptionModeIOS,
@@ -11,7 +11,7 @@ import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 import { RootStackParamList } from '../../App'
 
-type VideoScreenProps = NativeStackScreenProps<RootStackParamList, 'Video'>
+type VideoScreenProps = StackScreenProps<RootStackParamList, 'Video'>
 
 function VideoScreen({ route }: VideoScreenProps) {
   const video = useRef<Video>(null)
@@ -42,29 +42,29 @@ function VideoScreen({ route }: VideoScreenProps) {
     fetchData().catch(console.error)
   }, [])
 
-  return loading ? (
-    <SafeAreaView style={{ alignItems: 'center' }}>
-      <Text>Loading...</Text>
-    </SafeAreaView>
-  ) : (
+  return (
     <SafeAreaView style={styles.container}>
       <Text style={{ textAlign: 'center', fontSize: 25, padding: 10 }}>
         {route.params.postTitle}
       </Text>
       <Text style={{ padding: 10 }}>{route.params.text}</Text>
       <View style={styles.videoContainer}>
-        <Video
-          ref={video}
-          style={styles.video}
-          source={{
-            uri,
-          }}
-          useNativeControls
-          resizeMode={ResizeMode.CONTAIN}
-          shouldPlay
-          usePoster
-          posterSource={{ uri: route.params.thumbNail }}
-        />
+        {loading ? (
+          <Text>Loading</Text>
+        ) : (
+          <Video
+            ref={video}
+            style={styles.video}
+            source={{
+              uri,
+            }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            shouldPlay
+            usePoster
+            posterSource={{ uri: route.params.thumbNail }}
+          />
+        )}
       </View>
     </SafeAreaView>
   )
