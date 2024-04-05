@@ -1,30 +1,38 @@
 {
   "expo": {
-    "name": "ug-mobileapp",
-    "slug": "ug-mobileapp",
+    "name": "Ultrasound Guidance",
+    "slug": "ultrasound-guidance",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/app-icon.png",
+    "icon": "./assets/images/app-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/app-splash.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Sk-Modernist-Regular.otf", 
+            "./assets/fonts/Sk-Modernist-Bold.otf"
+          ]
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/app-icon.png",
+        "foregroundImage": "./assets/images/splash-icon.png",
         "backgroundColor": "#ffffff"
       }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
   }
 }

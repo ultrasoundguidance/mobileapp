@@ -1,40 +1,46 @@
-import { StackScreenProps } from '@react-navigation/stack'
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
+import { Image } from 'expo-image'
 import React from 'react'
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 
 import { RootStackParamList } from '../../App'
-import { useUserContext } from '../context/AppContext'
-
-type HomeScreenProp = StackScreenProps<RootStackParamList, 'Home'>
+import PrimaryBtn from '../components/PrimaryBtn'
+import { SkModernistTitleText } from '../components/SkModernistTitleText'
+import { useUserContext } from '../contexts/AppContext'
 
 export enum AtlasTypes {
   diagnostic = 'Diagnostic Atlas',
   procedure = 'Procedure Atlas',
 }
 
+type HomeScreenProp = BottomTabScreenProps<RootStackParamList, 'Home'>
+
 export default function HomeScreen({ navigation }: HomeScreenProp) {
   const { userData } = useUserContext()
+
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <Text style={styles.header}>
-          Welcome {userData?.name.split(' ')[0]}!
-        </Text>
-        <Text>Select which videos to view</Text>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() =>
-            navigation.navigate('Videos', { type: AtlasTypes.diagnostic })
-          }>
-          <Text>{AtlasTypes.diagnostic}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() =>
-            navigation.navigate('Videos', { type: AtlasTypes.procedure })
-          }>
-          <Text>{AtlasTypes.procedure}</Text>
-        </TouchableOpacity>
+        <Image
+          style={styles.image}
+          contentFit="contain"
+          source={require('../../assets/images/icon.png')}
+        />
+        <SkModernistTitleText style={styles.header}>
+          Welcome, {userData?.name.split(' ')[0]}!
+        </SkModernistTitleText>
+        <PrimaryBtn
+          text={AtlasTypes.diagnostic}
+          onPress={() => {
+            navigation.jumpTo('Diagnostic')
+          }}
+        />
+        <PrimaryBtn
+          text={AtlasTypes.procedure}
+          onPress={() => {
+            navigation.jumpTo('Procedures')
+          }}
+        />
       </View>
     </View>
   )
@@ -50,16 +56,13 @@ const styles = StyleSheet.create({
   contentContainer: {
     maxWidth: 250,
   },
+  image: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+  },
   header: {
     fontSize: 30,
     marginVertical: 15,
-  },
-  btn: {
-    padding: 10,
-    alignItems: 'center',
-    borderBlockColor: 'purple',
-    borderWidth: 2,
-    borderRadius: 5,
-    marginVertical: 5,
   },
 })
