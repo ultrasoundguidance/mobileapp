@@ -1,4 +1,3 @@
-import { useTheme } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import { Image } from 'expo-image'
@@ -10,7 +9,7 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native'
-import { MultipleSelectList } from 'react-native-dropdown-select-list'
+import { MultiSelect } from 'react-native-element-dropdown'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -34,7 +33,6 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
   const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState<string[]>([])
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width)
-  const { colors } = useTheme()
 
   Dimensions.addEventListener('change', () => {
     setScreenWidth(Dimensions.get('window').width)
@@ -110,21 +108,47 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
     )
   }
 
+  const renderItem = (item: { label: string; value: string }) => {
+    const selected = categories.includes(item.value)
+    return (
+      <View
+        style={[
+          styles.item,
+          { backgroundColor: selected ? UGTheme.colors.primary : 'white' },
+        ]}>
+        <SkModernistText
+          style={[styles.textItem, { color: selected ? 'white' : 'black' }]}>
+          {item.label}
+        </SkModernistText>
+      </View>
+    )
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {loading ? (
         <View style={{ flex: 1, justifyContent: 'center' }}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={UGTheme.colors.primary} />
         </View>
       ) : (
         <View style={{ paddingBottom: 40 }}>
           <View style={styles.multipleSelectContainer}>
-            <MultipleSelectList
-              placeholder="Select categories"
-              setSelected={(val: any) => setCategories(val)}
+            <MultiSelect
               data={data!}
-              save="value"
-              label="Categories"
+              value={categories}
+              labelField="label"
+              valueField="value"
+              onChange={(val: any) => setCategories(val)}
+              selectedStyle={styles.selected}
+              selectedTextStyle={{ color: 'white' }}
+              activeColor={UGTheme.colors.primary}
+              search
+              placeholder="Select categories"
+              renderItem={renderItem}
+              searchPlaceholder="Search"
+              style={styles.multiSelect}
+              fontFamily="Sk-Modernist-Regular"
+              inputSearchStyle={{ borderRadius: 10 }}
             />
           </View>
           <ScrollView>
@@ -204,6 +228,25 @@ const styles = StyleSheet.create({
     fontSize: 24,
     paddingBottom: 25,
     color: UGTheme.colors.primary,
+  },
+  multiSelect: {
+    borderBottomColor: UGTheme.colors.secondaryBlue,
+    borderBottomWidth: 2,
+  },
+  selected: {
+    borderRadius: 12,
+    padding: 5,
+    backgroundColor: UGTheme.colors.primary,
+  },
+  item: {
+    padding: 17,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textItem: {
+    flex: 1,
+    fontSize: 16,
   },
 })
 
