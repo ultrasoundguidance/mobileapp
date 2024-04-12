@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import { Image } from 'expo-image'
+import { openURL } from 'expo-linking'
 import React, { useState } from 'react'
 import {
   View,
@@ -14,6 +15,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native'
+import Dialog from 'react-native-dialog'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import PrimaryBtn from '../components/PrimaryBtn'
@@ -24,7 +26,31 @@ import { UGTheme } from '../styles/Theme'
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showFreeMemberAlert, setShowFreeMemberAlert] = useState(false)
   const { setIsLoggedIn } = useUserContext()
+
+  const handleDismiss = () => {
+    setShowFreeMemberAlert(false)
+  }
+
+  const freeMemberAlert = () => {
+    return (
+      <View style={styles.freeMemberAlert}>
+        <Dialog.Container visible={showFreeMemberAlert}>
+          <Dialog.Title>No active subscription found</Dialog.Title>
+          <Dialog.Description>
+            To use the mobile app please subscribe at
+          </Dialog.Description>
+          <Dialog.Description
+            onPress={() => openURL('https://www.ultrasoundguidance.com/plans/')}
+            style={{ textDecorationLine: 'underline', color: 'blue' }}>
+            www.ultrasoundguidance.com
+          </Dialog.Description>
+          <Dialog.Button label="OK" onPress={handleDismiss} />
+        </Dialog.Container>
+      </View>
+    )
+  }
 
   const getUser = () => {
     if (email === '') {
@@ -41,10 +67,7 @@ export default function LoginScreen() {
         .then(async response => {
           if (response.data.length > 0) {
             if (response.data[0].status === 'free') {
-              Alert.alert(
-                'No active subscription found',
-                'To use the mobile app please subscribe at https://www.ultrasoundguidance.com/plans/',
-              )
+              setShowFreeMemberAlert(true)
             } else if (
               response.data[0].status === 'paid' ||
               response.data[0].status === 'comped'
@@ -89,6 +112,7 @@ export default function LoginScreen() {
           style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
+              {freeMemberAlert()}
               <Image
                 style={styles.image}
                 contentFit="contain"
@@ -122,6 +146,11 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  freeMemberAlert: {
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
