@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { SkModernistText } from './SkModernistText'
 import { SkModernistTitleText } from './SkModernistTitleText'
 import { RootStackParamList } from '../../App'
+import { UG_URL } from '../Constants'
 import { AtlasTypes } from '../screens/Home'
 import { UGTheme } from '../styles/Theme'
 import { Lexical, PostData, Tag } from '../types/Posts'
@@ -42,12 +43,9 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
     const tag =
       route.params.type === AtlasTypes.diagnostic ? 'msk' : 'hash-procedure'
     axios
-      .post(
-        'https://us-central1-ultrasound-guidance.cloudfunctions.net/app/get-published-posts',
-        {
-          tag,
-        },
-      )
+      .post(`${UG_URL}/post/getPublishedPosts`, {
+        tag,
+      })
       .then(response => {
         const videoData: VideoProps[] = Object.values(
           response.data.reduce((accumulator: any, post: any) => {

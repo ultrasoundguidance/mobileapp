@@ -8,9 +8,9 @@ import { Image, View } from 'react-native'
 
 import { MemberDetails, UserContext } from './app/contexts/AppContext'
 import DiagnosticNav from './app/navs/Diagnostic'
+import LoginNav from './app/navs/Login'
 import ProceduresScreen from './app/navs/Procedures'
 import HomeScreen, { AtlasTypes } from './app/screens/Home'
-import LoginScreen from './app/screens/Login'
 import ProfileScreen from './app/screens/Profile'
 import { UGTheme } from './app/styles/Theme'
 import { RootChild } from './app/types/Posts'
@@ -24,6 +24,8 @@ export type RootStackParamList = {
     thumbNail: string
   }
   Login: undefined
+  Email: undefined
+  Password: { email: string }
   Profile: undefined
   Diagnostic: undefined
   Procedures: undefined
@@ -126,7 +128,7 @@ function App() {
             />
           </Tab.Navigator>
         ) : (
-          <LoginScreen />
+          <LoginNav />
         )}
       </NavigationContainer>
     </UserContext.Provider>

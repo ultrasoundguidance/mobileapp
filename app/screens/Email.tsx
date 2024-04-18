@@ -1,35 +1,98 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import { Image } from 'expo-image'
 import { openURL } from 'expo-linking'
 import React, { useState } from 'react'
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Alert,
   ActivityIndicator,
+  Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Keyboard,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableWithoutFeedback,
+  View,
 } from 'react-native'
 import Dialog from 'react-native-dialog'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { RootStackParamList } from '../../App'
+import { UG_URL } from '../Constants'
 import PrimaryBtn from '../components/PrimaryBtn'
 import { SkModernistTitleText } from '../components/SkModernistTitleText'
-import { useUserContext } from '../contexts/AppContext'
 import { UGTheme } from '../styles/Theme'
 
-export default function LoginScreen() {
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showFreeMemberAlert, setShowFreeMemberAlert] = useState(false)
-  const { setIsLoggedIn } = useUserContext()
+type EmailScreenProp = StackScreenProps<RootStackParamList, 'Email'>
 
-  const handleDismiss = () => {
+export default function EmailScreen({ navigation }: EmailScreenProp) {
+  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [showFreeMemberAlert, setShowFreeMemberAlert] = useState(false)
+
+  const sendEmailPasscode = async (email: string, userName: string) => {
+    axios
+      .post(`${UG_URL}/auth/sendEmailPasscode`, {
+        email: email.toLowerCase(),
+        username: userName,
+      })
+      .then(result => {
+        console.log('sent email! 📫')
+        navigation.navigate('Password', { email })
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
+  }
+
+  const validateMembership = async (email: string) => {
+    setLoading(true)
+    let userName = undefined
+    try {
+      const response = await axios.post(`${UG_URL}/auth/validateEmail`, {
+        email: email.toLowerCase(),
+      })
+
+      if (response.data.length > 0) {
+        if (response.data[0].status === 'free') {
+          setShowFreeMemberAlert(true)
+        } else if (
+          response.data[0].status === 'paid' ||
+          response.data[0].status === 'comped'
+        ) {
+          await AsyncStorage.setItem(
+            'user_data',
+            JSON.stringify(response.data[0]),
+          )
+          userName = response.data[0].name
+        }
+      } else {
+        Alert.alert(
+          'Email not found',
+          'Enter the email address associated with your Ultrasound Guidance account',
+        )
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    setLoading(false)
+    return userName
+  }
+
+  const loginUser = async () => {
+    if (email === '') {
+      Alert.alert('Enter email', 'Email cannot be blank')
+    } else {
+      const userName = await validateMembership(email)
+      if (userName) {
+        sendEmailPasscode(email, userName)
+      }
+    }
+  }
+
+  const handleDismissFreeMemberAlert = () => {
     setShowFreeMemberAlert(false)
   }
 
@@ -46,50 +109,10 @@ export default function LoginScreen() {
             style={{ textDecorationLine: 'underline', color: 'blue' }}>
             www.ultrasoundguidance.com
           </Dialog.Description>
-          <Dialog.Button label="OK" onPress={handleDismiss} />
+          <Dialog.Button label="OK" onPress={handleDismissFreeMemberAlert} />
         </Dialog.Container>
       </View>
     )
-  }
-
-  const getUser = () => {
-    if (email === '') {
-      Alert.alert('Enter email', 'Email cannot be blank')
-    } else {
-      setLoading(true)
-      axios
-        .post(
-          'https://us-central1-ultrasound-guidance.cloudfunctions.net/app/validate-email',
-          {
-            email: email.toLowerCase(),
-          },
-        )
-        .then(async response => {
-          if (response.data.length > 0) {
-            if (response.data[0].status === 'free') {
-              setShowFreeMemberAlert(true)
-            } else if (
-              response.data[0].status === 'paid' ||
-              response.data[0].status === 'comped'
-            ) {
-              await AsyncStorage.setItem(
-                'user_data',
-                JSON.stringify(response.data[0]),
-              )
-              setIsLoggedIn(true)
-            }
-          } else {
-            Alert.alert(
-              'Email not found',
-              'Enter the email address associated with your Ultrasound Guidance account',
-            )
-          }
-          setLoading(false)
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    }
   }
 
   const BlueText = () => {
@@ -136,7 +159,7 @@ export default function LoginScreen() {
                 value={email}
               />
 
-              <PrimaryBtn text="Sign In" onPress={() => getUser()} />
+              <PrimaryBtn text="Sign In" onPress={() => loginUser()} />
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
