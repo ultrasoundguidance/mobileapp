@@ -17,9 +17,10 @@ import { SkModernistText } from './SkModernistText'
 import { SkModernistTitleText } from './SkModernistTitleText'
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
+import { useUserContext } from '../contexts/AppContext'
 import { AtlasTypes } from '../screens/Home'
 import { UGTheme } from '../styles/Theme'
-import { Lexical, PostData, Tag } from '../types/Posts'
+import { Lexical, PostData, RootChild, Tag, WatchedVideo } from '../types/Posts'
 
 interface VideoProps {
   value: string
@@ -30,6 +31,7 @@ interface VideoProps {
 type VideosScreenProp = StackScreenProps<RootStackParamList, 'Videos'>
 
 function VideosScreen({ navigation, route }: VideosScreenProp) {
+  const { userData } = useUserContext()
   const [data, setData] = useState<VideoProps[]>()
   const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState<string[]>([])
@@ -39,14 +41,26 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
     setScreenWidth(Dimensions.get('window').width)
   })
 
-  useEffect(() => {
+  const getVideoProgress = async () => {
+    try {
+      const response = await axios.post(`${UG_URL}/video/getVideoProgress`, {
+        email: userData?.email,
+      })
+
+      return response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getPublishedPosts = () => {
     const tag =
       route.params.type === AtlasTypes.diagnostic ? 'msk' : 'hash-procedure'
     axios
       .post(`${UG_URL}/post/getPublishedPosts`, {
         tag,
       })
-      .then(response => {
+      .then(async response => {
         const videoData: VideoProps[] = Object.values(
           response.data.reduce((accumulator: any, post: any) => {
             if (post.lexical) {
@@ -60,6 +74,7 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
                     post.custom_excerpt ||
                     require('../../assets/images/icon-dark.png'),
                   tag,
+                  watchedVideos: [],
                 }
                 if (!tag.name.includes('#')) {
                   if (accumulator[tag.name]) {
@@ -80,10 +95,16 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
         )
 
         videoData.sort((a, b) => {
-          // if (a.value === 'Basics' || b.value === 'Basics') {
-          //   return 10000000000000
-          // }
           return a.value.localeCompare(b.value)
+        })
+
+        const videoProgress = await getVideoProgress()
+        videoData.map(videos => {
+          videos.data.forEach(video => {
+            if (videoProgress[video.id]) {
+              video.watchedVideos.push(videoProgress[video.id])
+            }
+          })
         })
 
         setData(videoData)
@@ -92,15 +113,47 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
       .catch(error => {
         console.log(error)
       })
+  }
+
+  useEffect(() => {
+    getPublishedPosts()
   }, [])
 
-  const ThumbNailItem = ({ thumbNail }: { thumbNail: string }) => {
+  const ThumbNailItem = ({
+    thumbNail,
+    watchedVideos,
+    posts,
+  }: {
+    thumbNail: string
+    watchedVideos: [WatchedVideo]
+    posts: [RootChild]
+  }) => {
+    const numOfVideos = posts.filter(post => post.type === 'embed').length
+    const TOTAL_WIDTH = 320
+    let width = 0
+
+    if (watchedVideos.length > 0) {
+      let progressPosition = 0
+      watchedVideos.forEach(video => {
+        progressPosition = video.progressPosition
+      })
+
+      width = (progressPosition / numOfVideos) * TOTAL_WIDTH
+    }
+
     return (
-      <View>
+      <View style={styles.imageContainer}>
         <Image
           style={styles.imageContainer}
           source={thumbNail}
           contentFit="contain"
+        />
+        <View
+          style={{
+            width,
+            height: 8,
+            backgroundColor: UGTheme.colors.primaryBlue,
+          }}
         />
       </View>
     )
@@ -170,7 +223,11 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
                                   thumbNail: item.thumbNail,
                                 })
                               }}>
-                              <ThumbNailItem thumbNail={item.thumbNail} />
+                              <ThumbNailItem
+                                thumbNail={item.thumbNail}
+                                watchedVideos={item.watchedVideos}
+                                posts={item.posts}
+                              />
                             </TouchableOpacity>
                             <SkModernistText style={styles.title}>
                               {item.title}

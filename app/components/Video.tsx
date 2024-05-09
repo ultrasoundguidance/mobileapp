@@ -1,30 +1,16 @@
 import { StackScreenProps } from '@react-navigation/stack'
-import {
-  Audio,
-  InterruptionModeIOS,
-  InterruptionModeAndroid,
-  ResizeMode,
-  Video,
-} from 'expo-av'
-import React, { useEffect, useRef, useState } from 'react'
-import {
-  Dimensions,
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av'
+import React, { useEffect, useState } from 'react'
+import { FlatList, SafeAreaView, StyleSheet, Text } from 'react-native'
 
-import { SkModernistText } from './SkModernistText'
 import { SkModernistTitleText } from './SkModernistTitleText'
+import VideoItem from './VideoItem'
 import { RootStackParamList } from '../../App'
 
 type VideoScreenProps = StackScreenProps<RootStackParamList, 'Video'>
 type VideoItemProps = { uri?: any; text?: string | undefined }
 
 function VideoScreen({ navigation, route }: VideoScreenProps) {
-  const video = useRef<Video>(new Video({}))
   const [loading, setLoading] = useState(true)
   const [postData, setPostData] = useState<VideoItemProps[]>()
 
@@ -78,30 +64,6 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
     })
   }, [navigation])
 
-  const VideoItem = ({ uri, text }: VideoItemProps) => {
-    return text ? (
-      <SkModernistText style={styles.text}>{text}</SkModernistText>
-    ) : (
-      <View style={styles.videoContainer}>
-        <Video
-          ref={video}
-          style={styles.video}
-          source={{
-            uri,
-          }}
-          useNativeControls
-          resizeMode={ResizeMode.CONTAIN}
-          posterStyle={{ zIndex: -1 }}
-          usePoster
-          posterSource={{ uri: route.params.thumbNail }}
-          onLoad={async () => {
-            await video.current?.playAsync()
-            await video.current?.pauseAsync()
-          }}
-        />
-      </View>
-    )
-  }
   return (
     <SafeAreaView style={styles.container}>
       <SkModernistTitleText
@@ -126,18 +88,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-  },
-  videoContainer: {
-    flex: 1,
-  },
-  text: {
-    margin: 15,
-    marginTop: 20,
-    fontSize: 20,
-  },
-  video: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width * (9 / 16),
   },
 })
 

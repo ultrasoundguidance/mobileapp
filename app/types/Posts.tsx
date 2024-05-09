@@ -4,6 +4,14 @@ export interface PostData {
   posts: [RootChild]
   thumbNail: string
   tag: Tag
+  watchedVideos: [WatchedVideo]
+}
+
+export interface WatchedVideo {
+  videoId: number
+  watchedSeconds: number
+  postId: string
+  progressPosition: number
 }
 
 export interface Lexical {
