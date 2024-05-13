@@ -1,16 +1,17 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import { Image } from 'expo-image'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
+  RefreshControl,
+  ScrollView,
 } from 'react-native'
 import { MultiSelect } from 'react-native-element-dropdown'
-import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SkModernistText } from './SkModernistText'
@@ -22,7 +23,7 @@ import { AtlasTypes } from '../screens/Home'
 import { UGTheme } from '../styles/Theme'
 import { Lexical, PostData, RootChild, Tag, WatchedVideo } from '../types/Posts'
 
-interface VideoProps {
+interface PostProps {
   value: string
   label: string
   data: [PostData]
@@ -32,10 +33,11 @@ type VideosScreenProp = StackScreenProps<RootStackParamList, 'Videos'>
 
 function VideosScreen({ navigation, route }: VideosScreenProp) {
   const { userData } = useUserContext()
-  const [data, setData] = useState<VideoProps[]>()
+  const [data, setData] = useState<PostProps[]>()
   const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState<string[]>([])
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width)
+  const [refreshing, setRefreshing] = useState(false)
 
   Dimensions.addEventListener('change', () => {
     setScreenWidth(Dimensions.get('window').width)
@@ -61,7 +63,7 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
         tag,
       })
       .then(async response => {
-        const videoData: VideoProps[] = Object.values(
+        const postData: PostProps[] = Object.values(
           response.data.reduce((accumulator: any, post: any) => {
             if (post.lexical) {
               const lexical: Lexical = JSON.parse(post.lexical)
@@ -94,20 +96,20 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
           }, {}),
         )
 
-        videoData.sort((a, b) => {
+        postData.sort((a, b) => {
           return a.value.localeCompare(b.value)
         })
 
         const videoProgress = await getVideoProgress()
-        videoData.map(videos => {
-          videos.data.forEach(video => {
-            if (videoProgress[video.id]) {
-              video.watchedVideos.push(videoProgress[video.id])
+        postData.map(posts => {
+          posts.data.forEach(post => {
+            if (videoProgress[post.id]) {
+              post.watchedVideos.push(videoProgress[post.id])
             }
           })
         })
 
-        setData(videoData)
+        setData(postData)
         setLoading(false)
       })
       .catch(error => {
@@ -117,6 +119,12 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
 
   useEffect(() => {
     getPublishedPosts()
+  }, [])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    getPublishedPosts()
+    setRefreshing(false)
   }, [])
 
   const ThumbNailItem = ({
@@ -134,8 +142,10 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
 
     if (watchedVideos.length > 0) {
       let progressPosition = 0
-      watchedVideos.forEach(video => {
-        progressPosition = video.progressPosition
+      watchedVideos.forEach(videos => {
+        Object.values(videos).forEach(video => {
+          progressPosition += video.progressPosition
+        })
       })
 
       width = (progressPosition / numOfVideos) * TOTAL_WIDTH
@@ -202,7 +212,10 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
               inputSearchStyle={{ borderRadius: 10 }}
             />
           </View>
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
             {data!.map(item => {
               if (categories.includes(item.label) || categories.length === 0) {
                 return (
@@ -218,9 +231,11 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
                             <TouchableOpacity
                               onPress={() => {
                                 navigation.navigate('Video', {
+                                  postId: item.id,
                                   postTitle: item.title,
                                   posts: item.posts,
                                   thumbNail: item.thumbNail,
+                                  watchedVideos: item.watchedVideos,
                                 })
                               }}>
                               <ThumbNailItem

@@ -1,32 +1,85 @@
-import { Video, ResizeMode } from 'expo-av'
-import React, { useRef } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
+import { Vimeo } from 'react-native-vimeo-iframe'
 
 import { SkModernistText } from './SkModernistText'
+import { UG_URL } from '../Constants'
+import { useUserContext } from '../contexts/AppContext'
 
-const VideoItem = ({ uri, text }: { uri?: any; text?: string | undefined }) => {
-  const video = useRef<Video>(new Video({}))
+const VideoItem = ({
+  postId,
+  videoId,
+  text,
+  positionSecs,
+}: {
+  postId: string
+  videoId?: number
+  text?: string
+  positionSecs: number | undefined
+}) => {
+  const { userData } = useUserContext()
+  const [currentTime, setCurrentTime] = useState<number>()
+  const [duration, setDuration] = useState<number>()
 
+  useEffect(() => {
+    if (videoId) {
+      axios
+        .get(
+          `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${videoId}`,
+          {
+            headers: {
+              Referer: 'https://www.ultrasoundguidance.com/',
+            },
+          },
+        )
+        .then(response => {
+          setDuration(response.data.duration)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  }, [])
+
+  const saveVideoProgress = (progressPosition: number) => {
+    axios.post(`${UG_URL}/video/saveVideoProgress`, {
+      email: userData?.email,
+      postId,
+      progressPosition,
+      videoId,
+      watchedSeconds: currentTime,
+    })
+  }
+
+  const videoCallbacks = {
+    timeupdate: (data: any) => {
+      setCurrentTime(data['currentTime'])
+    },
+    pause: (data: any) => {
+      if (duration && currentTime) {
+        saveVideoProgress(currentTime / duration)
+      }
+    },
+    ended: (data: any) => {
+      if (duration && currentTime) {
+        saveVideoProgress(currentTime / duration)
+      }
+    },
+  }
   return text ? (
     <SkModernistText style={styles.text}>{text}</SkModernistText>
   ) : (
     <View style={styles.videoContainer}>
-      <Video
-        ref={video}
-        style={styles.video}
-        source={{
-          uri,
+      <Vimeo
+        style={{
+          width: Dimensions.get('screen').width,
+          height: Dimensions.get('window').width * (9 / 16),
         }}
-        useNativeControls
-        resizeMode={ResizeMode.CONTAIN}
-        posterStyle={{ zIndex: -1 }}
-        usePoster
-        onLoad={async () => {
-          await video.current.playAsync()
-          await video.current.pauseAsync()
-          const value = await video.current.setRateAsync(0, true)
-          console.log(value)
-        }}
+        videoId={`${videoId!}`}
+        reference="https://www.ultrasoundguidance.com/"
+        params={`play_button_position=center&#t=${positionSecs}`}
+        handlers={videoCallbacks}
       />
     </View>
   )

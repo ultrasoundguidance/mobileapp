@@ -13,15 +13,17 @@ import ProceduresScreen from './app/navs/Procedures'
 import HomeScreen, { AtlasTypes } from './app/screens/Home'
 import ProfileScreen from './app/screens/Profile'
 import { UGTheme } from './app/styles/Theme'
-import { RootChild } from './app/types/Posts'
+import { RootChild, WatchedVideo } from './app/types/Posts'
 
 export type RootStackParamList = {
   Home: undefined
   Videos: { type: string }
   Video: {
+    postId: string
     postTitle: string
     posts: [RootChild]
     thumbNail: string
+    watchedVideos: [WatchedVideo]
   }
   Login: undefined
   Email: undefined

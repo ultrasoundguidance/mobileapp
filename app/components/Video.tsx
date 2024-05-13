@@ -8,7 +8,11 @@ import VideoItem from './VideoItem'
 import { RootStackParamList } from '../../App'
 
 type VideoScreenProps = StackScreenProps<RootStackParamList, 'Video'>
-type VideoItemProps = { uri?: any; text?: string | undefined }
+type VideoItemProps = {
+  videoId?: number
+  text?: string
+  positionSecs?: number
+}
 
 function VideoScreen({ navigation, route }: VideoScreenProps) {
   const [loading, setLoading] = useState(true)
@@ -17,19 +21,32 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
   const getData = async () => {
     const postItems:
       | React.SetStateAction<[VideoItemProps] | undefined>
-      | { uri?: any; text?: string }[] = []
+      | { videoId?: number; text?: string; positionSecs?: number }[] = []
 
     for (let index = 0; index < route.params.posts.length; index++) {
       if (route.params.posts[index].type === 'embed') {
-        const url = `https://api.vimeo.com/videos/${route.params.posts[index].metadata?.video_id}?fields=name,download`
-        const response = await fetch(url, {
-          headers: {
-            Authorization: 'Bearer fdd1ac1f3a196210e29941eee7c3e6c5',
-          },
-        })
-
-        const uri = await response.json()
-        postItems.push({ uri: uri.download[0].link })
+        if (route.params.watchedVideos.length > 0) {
+          route.params.watchedVideos.forEach(videos => {
+            Object.values(videos).forEach(video => {
+              if (
+                video.videoId === route.params.posts[index].metadata?.video_id
+              ) {
+                postItems.push({
+                  videoId: route.params.posts[index].metadata?.video_id,
+                  positionSecs: video.watchedSeconds,
+                })
+              } else {
+                postItems.push({
+                  videoId: route.params.posts[index].metadata?.video_id,
+                })
+              }
+            })
+          })
+        } else {
+          postItems.push({
+            videoId: route.params.posts[index].metadata?.video_id,
+          })
+        }
       } else if (route.params.posts[index].type === 'paragraph') {
         route.params.posts[index].children?.forEach(element => {
           postItems.push({ text: element.text })
@@ -44,14 +61,6 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
   }
 
   useEffect(() => {
-    Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-      playsInSilentModeIOS: true,
-      shouldDuckAndroid: true,
-      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-    })
-
     getData()
     setLoading(false)
 
@@ -76,7 +85,12 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
         <FlatList
           data={postData}
           renderItem={({ item }) => (
-            <VideoItem uri={item.uri} text={item.text} />
+            <VideoItem
+              postId={route.params.postId}
+              videoId={item.videoId}
+              text={item.text}
+              positionSecs={item.positionSecs}
+            />
           )}
         />
       )}
