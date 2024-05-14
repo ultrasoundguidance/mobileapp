@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
   text: {
     margin: 15,
     marginTop: 20,
+    lineHeight: 20,
     fontSize: 20,
   },
   video: {

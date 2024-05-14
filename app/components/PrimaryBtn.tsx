@@ -2,14 +2,19 @@ import { useTheme } from '@react-navigation/native'
 import React from 'react'
 import {
   GestureResponderEvent,
+  StyleProp,
   StyleSheet,
-  Text,
+  TextStyle,
   TouchableOpacity,
+  ViewStyle,
 } from 'react-native'
 
+import { SkModernistTitleText } from './SkModernistTitleText'
 import { UGTheme } from '../styles/Theme'
 
 type PrimaryBtnProps = {
+  btnStyle?: StyleProp<ViewStyle>
+  textStyle?: StyleProp<TextStyle>
   text: string
   onPress: (event: GestureResponderEvent) => void
 }
@@ -18,11 +23,18 @@ export default function PrimaryBtn(props: PrimaryBtnProps) {
 
   return (
     <TouchableOpacity
-      style={[styles.btn, { backgroundColor: colors.primary }]}
+      style={[styles.btn, { backgroundColor: colors.primary }, props.btnStyle]}
       onPress={props.onPress}>
-      <Text style={{ color: UGTheme.colors.primaryBlue, fontWeight: 'bold' }}>
+      <SkModernistTitleText
+        style={[
+          {
+            fontSize: 15,
+            color: UGTheme.colors.primaryBlue,
+          },
+          props.textStyle,
+        ]}>
         {props.text}
-      </Text>
+      </SkModernistTitleText>
     </TouchableOpacity>
   )
 }

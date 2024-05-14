@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 30,
+    lineHeight: 30,
     marginVertical: 15,
   },
 })

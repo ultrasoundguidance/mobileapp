@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
   },
   cellText: {
     color: '#000',
+    lineHeight: 36,
     fontSize: 36,
     textAlign: 'center',
   },

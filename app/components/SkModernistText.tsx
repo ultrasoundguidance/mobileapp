@@ -20,6 +20,7 @@ export const SkModernistText = ({
 
 const styles = StyleSheet.create({
   text: {
+    lineHeight: 20,
     fontFamily: 'Sk-Modernist-Regular',
   },
 })

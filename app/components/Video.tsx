@@ -76,7 +76,12 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <SkModernistTitleText
-        style={{ textAlign: 'center', fontSize: 25, margin: 10 }}>
+        style={{
+          textAlign: 'center',
+          lineHeight: 25,
+          fontSize: 25,
+          margin: 10,
+        }}>
         {route.params.postTitle}
       </SkModernistTitleText>
       {loading ? (

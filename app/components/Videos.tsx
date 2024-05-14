@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    lineHeight: 35,
     fontSize: 35,
     paddingVertical: 10,
     alignSelf: 'center',
@@ -296,6 +297,7 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     fontSize: 24,
+    lineHeight: 24,
     paddingBottom: 25,
     color: UGTheme.colors.primary,
   },
@@ -316,6 +318,7 @@ const styles = StyleSheet.create({
   },
   textItem: {
     flex: 1,
+    lineHeight: 16,
     fontSize: 16,
   },
 })
