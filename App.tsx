@@ -23,7 +23,8 @@ export type RootStackParamList = {
     postTitle: string
     posts: [RootChild]
     thumbNail: string
-    watchedVideos: [WatchedVideo]
+    watchedVideos: [{ [key: string]: WatchedVideo }]
+    videoCount: number
   }
   Login: undefined
   Email: undefined

@@ -5,6 +5,7 @@ export interface PostData {
   thumbNail: string
   tag: Tag
   watchedVideos: [WatchedVideo]
+  videoCount: number
 }
 
 export interface WatchedVideo {

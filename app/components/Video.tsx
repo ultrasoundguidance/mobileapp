@@ -1,5 +1,4 @@
 import { StackScreenProps } from '@react-navigation/stack'
-import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av'
 import React, { useEffect, useState } from 'react'
 import { FlatList, SafeAreaView, StyleSheet, Text } from 'react-native'
 
@@ -25,26 +24,24 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
 
     for (let index = 0; index < route.params.posts.length; index++) {
       if (route.params.posts[index].type === 'embed') {
+        const videoId = route.params.posts[index].metadata!.video_id
         if (route.params.watchedVideos.length > 0) {
           route.params.watchedVideos.forEach(videos => {
-            Object.values(videos).forEach(video => {
-              if (
-                video.videoId === route.params.posts[index].metadata?.video_id
-              ) {
-                postItems.push({
-                  videoId: route.params.posts[index].metadata?.video_id,
-                  positionSecs: video.watchedSeconds,
-                })
-              } else {
-                postItems.push({
-                  videoId: route.params.posts[index].metadata?.video_id,
-                })
-              }
-            })
+            if (videos[videoId]) {
+              const videoItem = videos[videoId]
+              postItems.push({
+                videoId,
+                positionSecs: videoItem.watchedSeconds,
+              })
+            } else {
+              postItems.push({
+                videoId,
+              })
+            }
           })
         } else {
           postItems.push({
-            videoId: route.params.posts[index].metadata?.video_id,
+            videoId,
           })
         }
       } else if (route.params.posts[index].type === 'paragraph') {
@@ -95,6 +92,7 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
               videoId={item.videoId}
               text={item.text}
               positionSecs={item.positionSecs}
+              videoCount={route.params.videoCount}
             />
           )}
         />

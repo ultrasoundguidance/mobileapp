@@ -21,7 +21,7 @@ import { UG_URL } from '../Constants'
 import { useUserContext } from '../contexts/AppContext'
 import { AtlasTypes } from '../screens/Home'
 import { UGTheme } from '../styles/Theme'
-import { Lexical, PostData, RootChild, Tag, WatchedVideo } from '../types/Posts'
+import { Lexical, PostData, Tag, WatchedVideo } from '../types/Posts'
 
 interface PostProps {
   value: string
@@ -77,6 +77,7 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
                     require('../../assets/images/icon-dark.png'),
                   tag,
                   watchedVideos: [],
+                  videoCount: 0,
                 }
                 if (!tag.name.includes('#')) {
                   if (accumulator[tag.name]) {
@@ -104,7 +105,20 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
         postData.map(posts => {
           posts.data.forEach(post => {
             if (videoProgress[post.id]) {
+              const videoProgressKeys = Object.keys(videoProgress[post.id])
+              const lastKey = videoProgressKeys[videoProgressKeys.length - 1]
+              if (lastKey === 'videoCount') {
+                post.videoCount = videoProgress[post.id].videoCount
+                delete videoProgress[post.id].videoCount
+              }
+              post.videoCount = post.posts.filter(
+                post => post.type === 'embed',
+              ).length
               post.watchedVideos.push(videoProgress[post.id])
+            } else {
+              post.videoCount = post.posts.filter(
+                post => post.type === 'embed',
+              ).length
             }
           })
         })
@@ -130,17 +144,17 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
   const ThumbNailItem = ({
     thumbNail,
     watchedVideos,
-    posts,
+    videoCount,
   }: {
     thumbNail: string
-    watchedVideos: [WatchedVideo]
-    posts: [RootChild]
+    watchedVideos: [{ [key: string]: WatchedVideo }]
+    videoCount: number
   }) => {
-    const numOfVideos = posts.filter(post => post.type === 'embed').length
+    const numOfVideos = videoCount
     const TOTAL_WIDTH = 320
     let width = 0
 
-    if (watchedVideos.length > 0) {
+    if (Object.keys(watchedVideos).length > 0) {
       let progressPosition = 0
       watchedVideos.forEach(videos => {
         Object.values(videos).forEach(video => {
@@ -235,13 +249,25 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
                                   postTitle: item.title,
                                   posts: item.posts,
                                   thumbNail: item.thumbNail,
-                                  watchedVideos: item.watchedVideos,
+                                  watchedVideos:
+                                    item.watchedVideos as unknown as [
+                                      {
+                                        [key: string]: WatchedVideo
+                                      },
+                                    ],
+                                  videoCount: item.videoCount,
                                 })
                               }}>
                               <ThumbNailItem
                                 thumbNail={item.thumbNail}
-                                watchedVideos={item.watchedVideos}
-                                posts={item.posts}
+                                watchedVideos={
+                                  item.watchedVideos as unknown as [
+                                    {
+                                      [key: string]: WatchedVideo
+                                    },
+                                  ]
+                                }
+                                videoCount={item.videoCount}
                               />
                             </TouchableOpacity>
                             <SkModernistText style={styles.title}>

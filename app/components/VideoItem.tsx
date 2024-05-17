@@ -12,11 +12,13 @@ const VideoItem = ({
   videoId,
   text,
   positionSecs,
+  videoCount,
 }: {
   postId: string
   videoId?: number
   text?: string
   positionSecs: number | undefined
+  videoCount: number
 }) => {
   const { userData } = useUserContext()
   const [currentTime, setCurrentTime] = useState<number>()
@@ -49,6 +51,7 @@ const VideoItem = ({
       progressPosition,
       videoId,
       watchedSeconds: currentTime,
+      videoCount,
     })
   }
 
