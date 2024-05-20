@@ -1,3 +1,4 @@
+import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import { Image } from 'expo-image'
 import React, { useState } from 'react'
@@ -20,6 +21,7 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field'
 
+import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
 import PrimaryBtn from '../components/PrimaryBtn'
 import { SkModernistText } from '../components/SkModernistText'
@@ -29,7 +31,9 @@ import { UGTheme } from '../styles/Theme'
 
 const CELL_COUNT = 6
 
-export default function PasswordScreen() {
+type PasswordScreenProps = StackScreenProps<RootStackParamList, 'Password'>
+
+export default function PasswordScreen({ route }: PasswordScreenProps) {
   const [loading, setLoading] = useState(false)
   const [value, setValue] = useState('')
   const { setIsLoggedIn } = useUserContext()
@@ -43,7 +47,7 @@ export default function PasswordScreen() {
     setLoading(true)
     axios
       .post(`${UG_URL}/auth/verifyEmailPasscode`, {
-        email: 'vnikki13@gmail.com',
+        email: route.params.email,
         passcode: value,
       })
       .then(result => {
