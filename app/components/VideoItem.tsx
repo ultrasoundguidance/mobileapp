@@ -76,7 +76,8 @@ const VideoItem = ({
     <View style={styles.videoContainer}>
       <Vimeo
         style={{
-          width: Dimensions.get('screen').width,
+          flex: 1,
+          width: Dimensions.get('window').width,
           height: Dimensions.get('window').width * (9 / 16),
         }}
         videoId={`${videoId!}`}
@@ -97,10 +98,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     lineHeight: 20,
     fontSize: 20,
-  },
-  video: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width * (9 / 16),
   },
 })
 

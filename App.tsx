@@ -115,7 +115,11 @@ function App() {
                 headerShown: false,
                 title: AtlasTypes.procedure,
                 tabBarIcon: ({ color, size }) => (
-                  <FontAwesome5 name="procedures" color={color} size={size} />
+                  <MaterialCommunityIcons
+                    name="needle"
+                    size={size}
+                    color={color}
+                  />
                 ),
               }}
             />

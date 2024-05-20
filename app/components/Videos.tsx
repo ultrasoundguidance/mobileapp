@@ -219,6 +219,7 @@ function VideosScreen({ navigation, route }: VideosScreenProp) {
               activeColor={UGTheme.colors.primary}
               search
               placeholder="Select categories"
+              placeholderStyle={styles.placeHolder}
               renderItem={renderItem}
               searchPlaceholder="Search"
               style={styles.multiSelect}
@@ -325,6 +326,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 24,
     paddingBottom: 25,
+    color: UGTheme.colors.primary,
+  },
+  placeHolder: {
+    fontWeight: 'bold',
+    fontSize: 20,
     color: UGTheme.colors.primary,
   },
   multiSelect: {

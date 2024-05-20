@@ -25,7 +25,7 @@ export const SkModernistTitleText = ({
 }
 const styles = StyleSheet.create({
   text: {
-    lineHeight: 20,
+    lineHeight: 30,
     fontFamily: 'Sk-Modernist-Bold',
     fontSize: 30,
   },
