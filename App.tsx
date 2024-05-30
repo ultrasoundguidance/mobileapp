@@ -27,8 +27,9 @@ export type RootStackParamList = {
     videoCount: number
   }
   Login: undefined
+  NewUser: undefined
   Email: undefined
-  Password: { email: string }
+  Passcode: { email: string }
   Profile: undefined
   Diagnostic: undefined
   Procedures: undefined

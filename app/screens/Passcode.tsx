@@ -1,6 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
-import { Image } from 'expo-image'
 import React, { useState } from 'react'
 import {
   ActivityIndicator,
@@ -23,17 +22,17 @@ import {
 
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
+import LogoStatement from '../components/LogoStatement'
 import PrimaryBtn from '../components/PrimaryBtn'
 import { SkModernistText } from '../components/SkModernistText'
-import { SkModernistTitleText } from '../components/SkModernistTitleText'
 import { useUserContext } from '../contexts/AppContext'
 import { UGTheme } from '../styles/Theme'
 
 const CELL_COUNT = 6
 
-type PasswordScreenProps = StackScreenProps<RootStackParamList, 'Password'>
+type PasscodeScreenProps = StackScreenProps<RootStackParamList, 'Passcode'>
 
-export default function PasswordScreen({ route }: PasswordScreenProps) {
+export default function PasscodeScreen({ route }: PasscodeScreenProps) {
   const [loading, setLoading] = useState(false)
   const [value, setValue] = useState('')
   const { setIsLoggedIn } = useUserContext()
@@ -43,7 +42,7 @@ export default function PasswordScreen({ route }: PasswordScreenProps) {
     setValue,
   })
 
-  const verifyEmailPassword = () => {
+  const verifyEmailPasscode = () => {
     setLoading(true)
     axios
       .post(`${UG_URL}/auth/verifyEmailPasscode`, {
@@ -63,13 +62,6 @@ export default function PasswordScreen({ route }: PasswordScreenProps) {
     setLoading(false)
   }
 
-  const BlueText = () => {
-    return (
-      <SkModernistTitleText style={styles.blueText}>
-        of your hand
-      </SkModernistTitleText>
-    )
-  }
   return (
     <SafeAreaView style={styles.container}>
       {loading ? (
@@ -82,16 +74,7 @@ export default function PasswordScreen({ route }: PasswordScreenProps) {
           style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
-              <Image
-                style={styles.image}
-                contentFit="contain"
-                source={require('../../assets/images/icon.png')}
-              />
-              <View>
-                <SkModernistTitleText>
-                  Ultrasound expertise in the palm {BlueText()}
-                </SkModernistTitleText>
-              </View>
+              <LogoStatement />
               <Text style={styles.header}>
                 Enter the verification code we sent to your email.
               </Text>
@@ -117,7 +100,7 @@ export default function PasswordScreen({ route }: PasswordScreenProps) {
               />
               <PrimaryBtn
                 text="Validate"
-                onPress={() => verifyEmailPassword()}
+                onPress={() => verifyEmailPasscode()}
               />
             </View>
           </TouchableWithoutFeedback>

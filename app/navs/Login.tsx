@@ -4,7 +4,8 @@ import React from 'react'
 
 import { RootStackParamList } from '../../App'
 import EmailScreen from '../screens/Email'
-import PasswordScreen from '../screens/Password'
+import NewUserScreen from '../screens/NewUser'
+import PasscodeScreen from '../screens/Passcode'
 
 const Stack = createStackNavigator<RootStackParamList>()
 
@@ -19,8 +20,18 @@ export default function LoginNav() {
         }}
       />
       <Stack.Screen
-        name="Password"
-        component={PasswordScreen}
+        name="NewUser"
+        component={NewUserScreen}
+        options={{
+          title: '',
+          headerShadowVisible: false,
+          headerTransparent: true,
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="Passcode"
+        component={PasscodeScreen}
         options={{
           title: '',
           headerShadowVisible: false,

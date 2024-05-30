@@ -20,30 +20,17 @@ import { UG_URL } from '../Constants'
 import LogoStatement from '../components/LogoStatement'
 import PrimaryBtn from '../components/PrimaryBtn'
 import { SkModernistText } from '../components/SkModernistText'
+import TermsConditions from '../components/TermsConditions'
 import { UGTheme } from '../styles/Theme'
 
-type EmailScreenProp = StackScreenProps<RootStackParamList, 'Email'>
+type NewUserScreenProp = StackScreenProps<RootStackParamList, 'NewUser'>
 
-export default function EmailScreen({ navigation }: EmailScreenProp) {
+export default function NewUserScreen({ navigation }: NewUserScreenProp) {
   const [loading, setLoading] = useState(false)
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
 
-  const sendEmailPasscode = async (email: string, userName: string) => {
-    axios
-      .post(`${UG_URL}/auth/sendEmailPasscode`, {
-        email: email.toLowerCase(),
-        username: userName,
-      })
-      .then(result => {
-        console.log('sent email! 📫')
-        navigation.navigate('Passcode', { email })
-      })
-      .catch((error: any) => {
-        console.log(error)
-      })
-  }
-
-  const validateMembership = async (email: string) => {
+  const validateMembership = async () => {
     setLoading(true)
     let userName = undefined
     try {
@@ -70,13 +57,48 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
     return userName
   }
 
-  const loginUser = async () => {
+  const sendEmailPasscode = async () => {
+    axios
+      .post(`${UG_URL}/auth/sendEmailPasscode`, {
+        email: email.toLowerCase(),
+        username: name,
+      })
+      .then(result => {
+        console.log('sent email! 📫')
+        navigation.navigate('Passcode', { email })
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
+  }
+
+  async function createMember() {
+    setLoading(true)
+    await axios
+      .post(`${UG_URL}/auth/createMember`, {
+        name,
+        email,
+      })
+      .catch(() => {
+        Alert.alert(
+          'Found account',
+          'An account already exists with that email. Logging you into that account',
+        )
+      })
+
+    setLoading(false)
+  }
+
+  async function signUp() {
     if (email === '') {
       Alert.alert('Enter email', 'Email cannot be blank')
+    } else if (name === '') {
+      Alert.alert('Enter Name', 'Name cannot be blank')
     } else {
-      const userName = await validateMembership(email)
+      await createMember()
+      const userName = await validateMembership()
       if (userName) {
-        sendEmailPasscode(email, userName)
+        sendEmailPasscode()
       }
     }
   }
@@ -94,31 +116,29 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
               <LogoStatement />
-              <SkModernistText style={styles.header}>
-                Enter your email
-              </SkModernistText>
+              <SkModernistText style={styles.header}>Name</SkModernistText>
+              <TextInput
+                style={styles.input}
+                placeholder="Jamie Larson"
+                onChangeText={(text: string) => {
+                  setName(text)
+                }}
+                value={name}
+              />
+              <SkModernistText style={styles.header}>Email</SkModernistText>
               <TextInput
                 autoCapitalize="none"
                 autoComplete="email"
                 style={styles.input}
-                placeholder="email@sample.com"
+                placeholder="jamie@example.com"
                 onChangeText={(text: string) => {
                   setEmail(text)
                 }}
                 inputMode="email"
                 value={email}
               />
-
-              <PrimaryBtn text="Sign In" onPress={() => loginUser()} />
-              <SkModernistText style={styles.header}>
-                Don't have an account yet?
-              </SkModernistText>
-              <PrimaryBtn
-                text="Create an account"
-                btnStyle={{ backgroundColor: UGTheme.colors.primaryBlue }}
-                textStyle={{ color: UGTheme.colors.primary }}
-                onPress={() => navigation.navigate('NewUser')}
-              />
+              <TermsConditions />
+              <PrimaryBtn text="Sign Up" onPress={() => signUp()} />
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -128,21 +148,27 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
 }
 
 const styles = StyleSheet.create({
-  freeMemberAlert: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
     padding: 15,
     alignItems: 'center',
   },
+  title: {
+    marginBottom: 10,
+  },
   header: {
-    marginTop: 30,
+    marginTop: 15,
     marginBottom: 5,
     fontSize: 20,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+  },
+  blueText: {
+    color: UGTheme.colors.primaryBlue,
   },
   input: {
     padding: 10,
@@ -150,6 +176,5 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 20,
   },
 })
