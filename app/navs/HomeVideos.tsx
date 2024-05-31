@@ -3,24 +3,24 @@ import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 
 import { RootStackParamList } from '../../App'
-import { AtlasTypes } from '../screens/Home'
-import PostsScreen from '../screens/Posts'
-import VideoScreen from '../screens/Video'
+import HomeScreen from '../screens/Home'
+import SampleVideosScreen from '../screens/SampleVideos'
 
 const Stack = createStackNavigator<RootStackParamList>()
 
-export default function ProceduresNav() {
+export default function HomeVideosNav() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Posts"
-        component={PostsScreen}
-        options={{ headerShown: false }}
-        initialParams={{ type: AtlasTypes.procedure }}
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
-        name="Video"
-        component={VideoScreen}
+        name="SampleVideos"
+        component={SampleVideosScreen}
         options={{
           headerBackTitleVisible: false,
           title: '',

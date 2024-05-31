@@ -8,16 +8,17 @@ import { Image, View } from 'react-native'
 
 import { MemberDetails, UserContext } from './app/contexts/AppContext'
 import DiagnosticNav from './app/navs/Diagnostic'
+import HomeVideosNav from './app/navs/HomeVideos'
 import LoginNav from './app/navs/Login'
 import ProceduresScreen from './app/navs/Procedures'
-import HomeScreen, { AtlasTypes } from './app/screens/Home'
+import { AtlasTypes } from './app/screens/Home'
 import ProfileScreen from './app/screens/Profile'
 import { UGTheme } from './app/styles/Theme'
 import { RootChild, WatchedVideo } from './app/types/Posts'
 
 export type RootStackParamList = {
-  Home: undefined
-  Videos: { type: string }
+  // Screens
+  Posts: { type: string }
   Video: {
     postId: string
     postTitle: string
@@ -26,13 +27,18 @@ export type RootStackParamList = {
     watchedVideos: [{ [key: string]: WatchedVideo }]
     videoCount: number
   }
-  Login: undefined
-  NewUser: undefined
   Email: undefined
   Passcode: { email: string }
   Profile: undefined
+  NewUser: undefined
+  Home: undefined
+  SampleVideos: undefined
+
+  // Navs
+  HomeVideos: undefined
   Diagnostic: undefined
   Procedures: undefined
+  Login: undefined
 }
 
 const Tab = createBottomTabNavigator<RootStackParamList>()
@@ -85,15 +91,17 @@ function App() {
               headerTintColor: 'black',
             }}>
             <Tab.Screen
-              name="Home"
-              component={HomeScreen}
+              name="HomeVideos"
+              component={HomeVideosNav}
               options={{
+                title: 'Home',
                 headerShown: false,
                 tabBarIcon: ({ color, size }) => (
                   <FontAwesome5 name="home" color={color} size={size} />
                 ),
               }}
             />
+
             <Tab.Screen
               name="Diagnostic"
               component={DiagnosticNav}

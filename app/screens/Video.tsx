@@ -2,9 +2,9 @@ import { StackScreenProps } from '@react-navigation/stack'
 import React, { useEffect, useState } from 'react'
 import { FlatList, SafeAreaView, StyleSheet, Text } from 'react-native'
 
-import { SkModernistTitleText } from './SkModernistTitleText'
-import VideoItem from './VideoItem'
 import { RootStackParamList } from '../../App'
+import { SkModernistTitleText } from '../components/SkModernistTitleText'
+import VideoItem from '../components/VideoItem'
 
 type VideoScreenProps = StackScreenProps<RootStackParamList, 'Video'>
 type VideoItemProps = {

@@ -13,6 +13,7 @@ import { UGTheme } from '../styles/Theme'
 
 export default function ProfileScreen() {
   const { userData, setUserData, setIsLoggedIn } = useUserContext()
+  console.log(userData?.status)
 
   const LogOut = async () => {
     setIsLoggedIn(false)
@@ -30,10 +31,10 @@ export default function ProfileScreen() {
   const Item = ({ subscription }: ItemProps) => (
     <View>
       <View style={styles.infoContainer}>
-        <SkModernistTitleText style={{ lineHeight: 15, fontSize: 15 }}>
+        <SkModernistTitleText style={{ fontSize: 15 }}>
           {subscription.tier.name}
         </SkModernistTitleText>
-        <SkModernistText>Statue: {subscription.status}</SkModernistText>
+        <SkModernistText>Status: {subscription.status}</SkModernistText>
         <SkModernistText>
           Start Date: {subscription.start_date.split('T')[0]}
         </SkModernistText>
@@ -41,6 +42,7 @@ export default function ProfileScreen() {
     </View>
   )
 
+  console.log(userData?.subscriptions)
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -60,10 +62,23 @@ export default function ProfileScreen() {
         <SkModernistText style={styles.subscriptions}>
           Subscriptions:
         </SkModernistText>
-        <FlatList
-          data={userData?.subscriptions}
-          renderItem={({ item }) => <Item subscription={item} />}
-        />
+        {userData!.subscriptions.length > 0 ? (
+          <FlatList
+            data={userData?.subscriptions}
+            renderItem={({ item }) => <Item subscription={item} />}
+          />
+        ) : (
+          <View>
+            <SkModernistText>
+              You currently have a free membership, upgrade to a paid
+              subscription for full access.
+            </SkModernistText>
+            <PrimaryBtn
+              text="View plans"
+              onPress={() => console.log('Do something with this')}
+            />
+          </View>
+        )}
       </View>
       <View
         style={{

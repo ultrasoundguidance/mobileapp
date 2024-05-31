@@ -14,12 +14,12 @@ import {
 import { MultiSelect } from 'react-native-element-dropdown'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { SkModernistText } from './SkModernistText'
-import { SkModernistTitleText } from './SkModernistTitleText'
+import { AtlasTypes } from './Home'
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
+import { SkModernistText } from '../components/SkModernistText'
+import { SkModernistTitleText } from '../components/SkModernistTitleText'
 import { useUserContext } from '../contexts/AppContext'
-import { AtlasTypes } from '../screens/Home'
 import { UGTheme } from '../styles/Theme'
 import { Lexical, PostData, Tag, WatchedVideo } from '../types/Posts'
 
@@ -29,9 +29,9 @@ interface PostProps {
   data: [PostData]
 }
 
-type VideosScreenProp = StackScreenProps<RootStackParamList, 'Videos'>
+type PostsScreenProp = StackScreenProps<RootStackParamList, 'Posts'>
 
-function VideosScreen({ navigation, route }: VideosScreenProp) {
+function PostsScreen({ navigation, route }: PostsScreenProp) {
   const { userData } = useUserContext()
   const [data, setData] = useState<PostProps[]>()
   const [loading, setLoading] = useState(true)
@@ -355,4 +355,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default VideosScreen
+export default PostsScreen

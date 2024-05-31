@@ -5,6 +5,7 @@ import { View, StyleSheet } from 'react-native'
 
 import { RootStackParamList } from '../../App'
 import PrimaryBtn from '../components/PrimaryBtn'
+import { SkModernistText } from '../components/SkModernistText'
 import { SkModernistTitleText } from '../components/SkModernistTitleText'
 import { useUserContext } from '../contexts/AppContext'
 
@@ -29,18 +30,35 @@ export default function HomeScreen({ navigation }: HomeScreenProp) {
         <SkModernistTitleText style={styles.header}>
           Welcome, {userData?.name.split(' ')[0]}!
         </SkModernistTitleText>
-        <PrimaryBtn
-          text={AtlasTypes.diagnostic}
-          onPress={() => {
-            navigation.jumpTo('Diagnostic')
-          }}
-        />
-        <PrimaryBtn
-          text={AtlasTypes.procedure}
-          onPress={() => {
-            navigation.jumpTo('Procedures')
-          }}
-        />
+        {userData?.status === 'free' ? (
+          <View>
+            <SkModernistText style={{ marginBottom: 10, fontSize: 15 }}>
+              To get started, check out sample videos here to get an idea of
+              what we can offer you and your institution.{' '}
+            </SkModernistText>
+            <PrimaryBtn
+              text="Sample Videos"
+              onPress={() => {
+                navigation.navigate('SampleVideos')
+              }}
+            />
+          </View>
+        ) : (
+          <View>
+            <PrimaryBtn
+              text={AtlasTypes.diagnostic}
+              onPress={() => {
+                navigation.jumpTo('Diagnostic')
+              }}
+            />
+            <PrimaryBtn
+              text={AtlasTypes.procedure}
+              onPress={() => {
+                navigation.jumpTo('Procedures')
+              }}
+            />
+          </View>
+        )}
       </View>
     </View>
   )

@@ -3,9 +3,9 @@ import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 
 import { RootStackParamList } from '../../App'
-import VideoScreen from '../components/Video'
-import VideosScreen from '../components/Videos'
 import { AtlasTypes } from '../screens/Home'
+import PostsScreen from '../screens/Posts'
+import VideoScreen from '../screens/Video'
 
 const Stack = createStackNavigator<RootStackParamList>()
 
@@ -13,8 +13,8 @@ export default function DiagnosticNav() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Videos"
-        component={VideosScreen}
+        name="Posts"
+        component={PostsScreen}
         options={{
           headerShown: false,
         }}
