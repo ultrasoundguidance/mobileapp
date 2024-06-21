@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import React, { useState } from 'react'
@@ -35,30 +36,60 @@ type PasscodeScreenProps = StackScreenProps<RootStackParamList, 'Passcode'>
 export default function PasscodeScreen({ route }: PasscodeScreenProps) {
   const [loading, setLoading] = useState(false)
   const [value, setValue] = useState('')
-  const { setIsLoggedIn } = useUserContext()
+  const { setIsLoggedIn, setUserData } = useUserContext()
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT })
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   })
 
-  const verifyEmailPasscode = () => {
-    setLoading(true)
-    axios
-      .post(`${UG_URL}/auth/verifyEmailPasscode`, {
+  const storeData = async () => {
+    try {
+      const jsonValue = JSON.stringify(route.params.membershipInfo)
+      await AsyncStorage.setItem('user_data', jsonValue)
+      setUserData(route.params.membershipInfo)
+    } catch (e) {
+      console.error('Something went wrong saving user data: ', e)
+    }
+  }
+
+  const verifyEmailPasscode = async (): Promise<boolean> => {
+    try {
+      await axios.post(`${UG_URL}/auth/verifyEmailPasscode`, {
         email: route.params.email,
         passcode: value,
       })
-      .then(result => {
-        setIsLoggedIn(true)
-      })
-      .catch(error => {
-        if (error.response) {
-          if (error.response.data === 'Unauthorized') {
-            Alert.alert('Unauthorized')
-          }
-        }
-      })
+      return true
+    } catch (error) {
+      console.log('Passcode not valid', error)
+      return false
+    }
+  }
+
+  const createStripeCustomer = async () => {
+    try {
+      const stripeCustomer = await axios.post(
+        `${UG_URL}/stripe/createStripeCustomer`,
+        {
+          email: route.params.email,
+          name: route.params.membershipInfo.name,
+        },
+      )
+      route.params.membershipInfo.stripeId = stripeCustomer.data.id
+    } catch (error) {
+      console.error('Unable to create Stripe customer: ', error)
+    }
+  }
+
+  const validate = async () => {
+    setLoading(true)
+    if (await verifyEmailPasscode()) {
+      await createStripeCustomer()
+      await storeData()
+      setIsLoggedIn(true)
+    } else {
+      Alert.alert('Unauthorized', 'Incorrect Passcode')
+    }
     setLoading(false)
   }
 
@@ -98,10 +129,7 @@ export default function PasscodeScreen({ route }: PasscodeScreenProps) {
                   </View>
                 )}
               />
-              <PrimaryBtn
-                text="Validate"
-                onPress={() => verifyEmailPasscode()}
-              />
+              <PrimaryBtn text="Validate" onPress={() => validate()} />
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

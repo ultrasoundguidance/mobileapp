@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import React, { useState } from 'react'
@@ -22,6 +21,7 @@ import PrimaryBtn from '../components/PrimaryBtn'
 import { SkModernistText } from '../components/SkModernistText'
 import TermsConditions from '../components/TermsConditions'
 import { UGTheme } from '../styles/Theme'
+import { MemberDetails } from '../types/Members'
 
 type NewUserScreenProp = StackScreenProps<RootStackParamList, 'NewUser'>
 
@@ -32,18 +32,14 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
 
   const validateMembership = async () => {
     setLoading(true)
-    let userName = undefined
+    let memberInfo = undefined
     try {
       const response = await axios.post(`${UG_URL}/auth/validateMembership`, {
         email: email.toLowerCase(),
       })
 
       if (response.data.length > 0) {
-        await AsyncStorage.setItem(
-          'user_data',
-          JSON.stringify(response.data[0]),
-        )
-        userName = response.data[0].name
+        memberInfo = response.data[0]
       } else {
         Alert.alert(
           'Email not found',
@@ -54,10 +50,10 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
       console.log(error)
     }
     setLoading(false)
-    return userName
+    return memberInfo
   }
 
-  const sendEmailPasscode = async () => {
+  const sendEmailPasscode = async (membershipInfo: MemberDetails) => {
     axios
       .post(`${UG_URL}/auth/sendEmailPasscode`, {
         email: email.toLowerCase(),
@@ -65,7 +61,7 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
       })
       .then(result => {
         console.log('sent email! 📫')
-        navigation.navigate('Passcode', { email })
+        navigation.navigate('Passcode', { email, membershipInfo })
       })
       .catch((error: any) => {
         console.log(error)
@@ -96,9 +92,9 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
       Alert.alert('Enter Name', 'Name cannot be blank')
     } else {
       await createMember()
-      const userName = await validateMembership()
-      if (userName) {
-        sendEmailPasscode()
+      const membershipInfo = await validateMembership()
+      if (membershipInfo.name) {
+        sendEmailPasscode(membershipInfo)
       }
     }
   }

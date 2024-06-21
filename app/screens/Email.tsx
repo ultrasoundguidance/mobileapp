@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
 import React, { useState } from 'react'
@@ -21,6 +20,7 @@ import LogoStatement from '../components/LogoStatement'
 import PrimaryBtn from '../components/PrimaryBtn'
 import { SkModernistText } from '../components/SkModernistText'
 import { UGTheme } from '../styles/Theme'
+import { MemberDetails } from '../types/Members'
 
 type EmailScreenProp = StackScreenProps<RootStackParamList, 'Email'>
 
@@ -28,15 +28,19 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
 
-  const sendEmailPasscode = async (email: string, userName: string) => {
+  const sendEmailPasscode = async (
+    email: string,
+    name: string,
+    membershipInfo: MemberDetails,
+  ) => {
     axios
       .post(`${UG_URL}/auth/sendEmailPasscode`, {
         email: email.toLowerCase(),
-        username: userName,
+        username: name,
       })
       .then(result => {
         console.log('sent email! 📫')
-        navigation.navigate('Passcode', { email })
+        navigation.navigate('Passcode', { email, membershipInfo })
       })
       .catch((error: any) => {
         console.log(error)
@@ -45,18 +49,14 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
 
   const validateMembership = async (email: string) => {
     setLoading(true)
-    let userName = undefined
+    let memberInfo = undefined
     try {
       const response = await axios.post(`${UG_URL}/auth/validateMembership`, {
         email: email.toLowerCase(),
       })
 
       if (response.data.length > 0) {
-        await AsyncStorage.setItem(
-          'user_data',
-          JSON.stringify(response.data[0]),
-        )
-        userName = response.data[0].name
+        memberInfo = response.data[0]
       } else {
         Alert.alert(
           'Email not found',
@@ -67,16 +67,16 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
       console.log(error)
     }
     setLoading(false)
-    return userName
+    return memberInfo
   }
 
   const loginUser = async () => {
     if (email === '') {
       Alert.alert('Enter email', 'Email cannot be blank')
     } else {
-      const userName = await validateMembership(email)
-      if (userName) {
-        sendEmailPasscode(email, userName)
+      const memberInfo = await validateMembership(email)
+      if (memberInfo?.name) {
+        sendEmailPasscode(email, memberInfo.name, memberInfo)
       }
     }
   }

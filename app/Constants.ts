@@ -1,3 +1,4 @@
+// For local testing, use the following URL 'http://<IP ADDRESS>:5001/ultrasound-guidance/us-central1/ug'
 export const UG_URL = 'https://ug-tjua6t7cwa-uc.a.run.app'
 
 export const FreeSampleVideoIds = [

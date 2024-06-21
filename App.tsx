@@ -1,19 +1,18 @@
 import 'react-native-gesture-handler'
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import axios from 'axios'
 import React, { useState, useEffect } from 'react'
-import { Image, View } from 'react-native'
+import { Image, View, Platform } from 'react-native'
+import Purchases from 'react-native-purchases'
 
-import { MemberDetails, UserContext } from './app/contexts/AppContext'
-import DiagnosticNav from './app/navs/Diagnostic'
-import HomeVideosNav from './app/navs/HomeVideos'
+import { UG_URL } from './app/Constants'
+import { UserContext } from './app/contexts/AppContext'
 import LoginNav from './app/navs/Login'
-import ProceduresScreen from './app/navs/Procedures'
-import { AtlasTypes } from './app/screens/Home'
-import ProfileScreen from './app/screens/Profile'
+import MainNav from './app/navs/Main'
 import { UGTheme } from './app/styles/Theme'
+import { MemberDetails } from './app/types/Members'
 import { RootChild, WatchedVideo } from './app/types/Posts'
 
 export type RootStackParamList = {
@@ -28,7 +27,7 @@ export type RootStackParamList = {
     videoCount: number
   }
   Email: undefined
-  Passcode: { email: string }
+  Passcode: { email: string; membershipInfo: any }
   Profile: undefined
   NewUser: undefined
   Home: undefined
@@ -39,29 +38,60 @@ export type RootStackParamList = {
   Diagnostic: undefined
   Procedures: undefined
   Login: undefined
+  Main: undefined
 }
 
-const Tab = createBottomTabNavigator<RootStackParamList>()
+const Stack = createStackNavigator<RootStackParamList>()
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [userData, setUserData] = useState<MemberDetails | undefined>(undefined)
 
-  useEffect(() => {
-    const getAuthenticated = async () => {
-      try {
-        const userInfo = await AsyncStorage.getItem('user_data')
-        if (userInfo) {
-          const info: MemberDetails = JSON.parse(userInfo)
-          setIsLoggedIn(true)
-          setUserData(info)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-      setIsLoading(false)
+  const getUser = async (email: string) => {
+    try {
+      const result = await axios.post(`${UG_URL}/auth/validateMembership`, {
+        email,
+      })
+      return result.data
+    } catch (error) {
+      console.error('Unable to get user: ', error)
     }
+  }
+  const getAuthenticated = async () => {
+    try {
+      const userInfo = await AsyncStorage.getItem('user_data')
+      if (userInfo) {
+        const info: MemberDetails = JSON.parse(userInfo)
+        const currentMember: MemberDetails[] = await getUser(info.email)
+        if (currentMember.length === 1) {
+          setUserData(currentMember[0])
+          setIsLoggedIn(true)
+        } else {
+          if (info.status === 'free') {
+            console.log('Setting Purchases information')
+            if (Platform.OS === 'ios') {
+              Purchases.configure({
+                apiKey: 'appl_HUYMIRUuPfqAivWjKidHSJVXxvf',
+                appUserID: info.stripeId,
+              })
+            } else if (Platform.OS === 'android') {
+              Purchases.configure({ apiKey: '' })
+            }
+            Purchases.setAttributes({
+              $email: info.email,
+              $displayName: info.name,
+            })
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
     getAuthenticated()
   }, [isLoggedIn])
 
@@ -80,72 +110,25 @@ function App() {
     <UserContext.Provider
       value={{ isLoggedIn, setIsLoggedIn, userData, setUserData }}>
       <NavigationContainer theme={UGTheme}>
-        {isLoggedIn ? (
-          <Tab.Navigator
-            id="RootNavigator"
-            initialRouteName="Home"
-            screenOptions={{
-              tabBarInactiveTintColor: UGTheme.colors.secondaryBlue,
-              headerShadowVisible: false,
-              headerTitleAlign: 'center', // for android
-              headerTintColor: 'black',
-            }}>
-            <Tab.Screen
-              name="HomeVideos"
-              component={HomeVideosNav}
-              options={{
-                title: 'Home',
-                headerShown: false,
-                tabBarIcon: ({ color, size }) => (
-                  <FontAwesome5 name="home" color={color} size={size} />
-                ),
-              }}
-            />
-
-            <Tab.Screen
-              name="Diagnostic"
-              component={DiagnosticNav}
+        <Stack.Navigator>
+          {isLoggedIn ? (
+            <Stack.Screen
+              name="Main"
+              component={MainNav}
               options={{
                 headerShown: false,
-                title: AtlasTypes.diagnostic,
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons
-                    name="clipboard-pulse"
-                    color={color}
-                    size={size}
-                  />
-                ),
               }}
             />
-            <Tab.Screen
-              name="Procedures"
-              component={ProceduresScreen}
+          ) : (
+            <Stack.Screen
+              name="Login"
+              component={LoginNav}
               options={{
                 headerShown: false,
-                title: AtlasTypes.procedure,
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons
-                    name="needle"
-                    size={size}
-                    color={color}
-                  />
-                ),
               }}
             />
-            <Tab.Screen
-              name="Profile"
-              component={ProfileScreen}
-              options={{
-                headerShown: false,
-                tabBarIcon: ({ color, size }) => (
-                  <FontAwesome5 name="user-alt" color={color} size={size} />
-                ),
-              }}
-            />
-          </Tab.Navigator>
-        ) : (
-          <LoginNav />
-        )}
+          )}
+        </Stack.Navigator>
       </NavigationContainer>
     </UserContext.Provider>
   )

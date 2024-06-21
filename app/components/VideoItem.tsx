@@ -14,12 +14,14 @@ const VideoItem = ({
   text,
   positionSecs,
   videoCount,
+  presentPaywall,
 }: {
   postId: string
   videoId?: number
   text?: string
   positionSecs: number | undefined
   videoCount: number
+  presentPaywall: () => void
 }) => {
   const { userData } = useUserContext()
   const [currentTime, setCurrentTime] = useState<number>()
@@ -102,7 +104,7 @@ const VideoItem = ({
               </SkModernistText>
               <PrimaryBtn
                 text="Subscribe now"
-                onPress={() => console.log('Let them subscribe')}
+                onPress={() => presentPaywall()}
               />
             </View>
           )}

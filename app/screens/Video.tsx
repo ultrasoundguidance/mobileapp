@@ -1,10 +1,14 @@
 import { StackScreenProps } from '@react-navigation/stack'
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { FlatList, SafeAreaView, StyleSheet, Text } from 'react-native'
+import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui'
 
 import { RootStackParamList } from '../../App'
+import { UG_URL } from '../Constants'
 import { SkModernistTitleText } from '../components/SkModernistTitleText'
 import VideoItem from '../components/VideoItem'
+import { useUserContext } from '../contexts/AppContext'
 
 type VideoScreenProps = StackScreenProps<RootStackParamList, 'Video'>
 type VideoItemProps = {
@@ -14,8 +18,72 @@ type VideoItemProps = {
 }
 
 function VideoScreen({ navigation, route }: VideoScreenProps) {
+  const { userData } = useUserContext()
   const [loading, setLoading] = useState(true)
   const [postData, setPostData] = useState<VideoItemProps[]>()
+
+  async function addPurchase() {
+    try {
+      axios.post(`${UG_URL}/auth/addSubscriptionToGhost`, {
+        userEmail: userData?.email,
+        userName: userData?.name,
+        userId: userData?.stripeId,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
+    userData!.subscriptions.push({
+      tier: undefined,
+      id: '',
+      customer: undefined,
+      plan: undefined,
+      status: 'active',
+      start_date: new Date().toISOString(),
+      default_payment_card_last4: '',
+      cancel_at_period_end: false,
+      cancellation_reason: null,
+      current_period_end: null,
+      offer: null,
+      price: {
+        id: '',
+        price_id: '',
+        nickname: '',
+        amount: 50,
+        interval: '',
+        type: '',
+        currency: '',
+        tier: {
+          id: '',
+          name: 'MSK Complete Package',
+          tier_id: '',
+        },
+      },
+    })
+    userData!.status = 'active'
+  }
+
+  async function presentPaywall(): Promise<boolean> {
+    const paywallResult: PAYWALL_RESULT = await RevenueCatUI.presentPaywall()
+
+    switch (paywallResult) {
+      case PAYWALL_RESULT.NOT_PRESENTED:
+      case PAYWALL_RESULT.ERROR:
+      case PAYWALL_RESULT.CANCELLED:
+        return false
+      case PAYWALL_RESULT.PURCHASED:
+        await addPurchase()
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'HomeVideos' }],
+        })
+        return true
+      case PAYWALL_RESULT.RESTORED:
+        return true
+      default:
+        return false
+    }
+  }
 
   const getData = async () => {
     const postItems:
@@ -93,6 +161,7 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
               text={item.text}
               positionSecs={item.positionSecs}
               videoCount={route.params.videoCount}
+              presentPaywall={presentPaywall}
             />
           )}
         />
