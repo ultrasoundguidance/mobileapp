@@ -31,7 +31,6 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
   const [email, setEmail] = useState('')
 
   const validateMembership = async () => {
-    setLoading(true)
     let memberInfo = undefined
     try {
       const response = await axios.post(`${UG_URL}/auth/validateMembership`, {
@@ -49,7 +48,6 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
     } catch (error) {
       console.log(error)
     }
-    setLoading(false)
     return memberInfo
   }
 
@@ -69,7 +67,6 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
   }
 
   async function createMember() {
-    setLoading(true)
     await axios
       .post(`${UG_URL}/auth/createMember`, {
         name,
@@ -81,8 +78,6 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
           'An account already exists with that email. Logging you into that account',
         )
       })
-
-    setLoading(false)
   }
 
   async function signUp() {
@@ -91,11 +86,15 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
     } else if (name === '') {
       Alert.alert('Enter Name', 'Name cannot be blank')
     } else {
+      setLoading(true)
+      // Create Ghost member
       await createMember()
+      // Get Ghost member
       const membershipInfo = await validateMembership()
       if (membershipInfo.name) {
         sendEmailPasscode(membershipInfo)
       }
+      setLoading(false)
     }
   }
 

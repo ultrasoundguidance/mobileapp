@@ -66,25 +66,9 @@ export default function PasscodeScreen({ route }: PasscodeScreenProps) {
     }
   }
 
-  const createStripeCustomer = async () => {
-    try {
-      const stripeCustomer = await axios.post(
-        `${UG_URL}/stripe/createStripeCustomer`,
-        {
-          email: route.params.email,
-          name: route.params.membershipInfo.name,
-        },
-      )
-      route.params.membershipInfo.stripeId = stripeCustomer.data.id
-    } catch (error) {
-      console.error('Unable to create Stripe customer: ', error)
-    }
-  }
-
   const validate = async () => {
     setLoading(true)
     if (await verifyEmailPasscode()) {
-      await createStripeCustomer()
       await storeData()
       setIsLoggedIn(true)
     } else {
