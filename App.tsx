@@ -58,32 +58,51 @@ function App() {
       console.error('Unable to get user: ', error)
     }
   }
+
+  const createStripeCustomer = async (email: string) => {
+    try {
+      const stripeCustomer = await axios.post(
+        `${UG_URL}/stripe/createStripeCustomer`,
+        {
+          email,
+        },
+      )
+      console.log('Got stripe customer ID: ', stripeCustomer.data.id)
+      return stripeCustomer.data.id
+    } catch (error) {
+      console.error('Unable to create Stripe customer: ', error)
+      return undefined
+    }
+  }
+
   const getAuthenticated = async () => {
     try {
       const userInfo = await AsyncStorage.getItem('user_data')
       if (userInfo) {
         const info: MemberDetails = JSON.parse(userInfo)
+        // Get the most current user info
         const currentMember: MemberDetails[] = await getUser(info.email)
-        if (currentMember.length === 1) {
-          setUserData(currentMember[0])
-          setIsLoggedIn(true)
-        } else {
-          if (info.status === 'free') {
-            console.log('Setting Purchases information')
-            if (Platform.OS === 'ios') {
-              Purchases.configure({
-                apiKey: 'appl_HUYMIRUuPfqAivWjKidHSJVXxvf',
-                appUserID: info.stripeId,
-              })
-            } else if (Platform.OS === 'android') {
-              Purchases.configure({ apiKey: '' })
-            }
-            Purchases.setAttributes({
-              $email: info.email,
-              $displayName: info.name,
+        currentMember[0].stripeId = await createStripeCustomer(
+          currentMember[0].email,
+        )
+        if (currentMember[0].status === 'free') {
+          console.log('Setting Purchases information')
+          if (Platform.OS === 'ios') {
+            Purchases.configure({
+              apiKey: 'appl_HUYMIRUuPfqAivWjKidHSJVXxvf',
+              appUserID: currentMember[0].stripeId,
             })
+          } else if (Platform.OS === 'android') {
+            Purchases.configure({ apiKey: '' })
           }
+          Purchases.setAttributes({
+            $email: currentMember[0].email,
+            $displayName: currentMember[0].name,
+          })
         }
+
+        setUserData(currentMember[0])
+        setIsLoggedIn(true)
       }
     } catch (error) {
       console.error(error)
