@@ -3,7 +3,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
 import axios from 'axios'
 import { Image } from 'expo-image'
 import React from 'react'
-import { StyleSheet, View, FlatList } from 'react-native'
+import { StyleSheet, View, FlatList, Alert } from 'react-native'
 import email from 'react-native-email'
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -85,7 +85,7 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
     }
   }
 
-  const LogOut = async () => {
+  const logOut = async () => {
     setIsLoggedIn(false)
     setUserData(undefined)
     await AsyncStorage.removeItem('user_data')
@@ -98,13 +98,46 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
     email(to).catch(console.error)
   }
 
+  const deleteAccount = () => {
+    try {
+      axios.post(`${UG_URL}/auth/deleteMember`, {
+        id: userData?.id,
+      })
+      logOut()
+    } catch (error) {
+      console.log(error)
+      Alert.alert(
+        'Unable to delete account',
+        'Please contact support for further assistance',
+      )
+    }
+  }
+
+  const confirmDeleteAlert = () =>
+    Alert.alert(
+      'Delete Account',
+      'Deleting your account will remove all data. Are you sure you want to delete your account?',
+      [
+        {
+          text: 'Delete Account',
+          onPress: () => deleteAccount(),
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+    )
+
   const Item = ({ subscription }: ItemProps) => (
     <View>
       <View style={styles.infoContainer}>
         {userData ? (
           <View>
             <SkModernistTitleText style={{ fontSize: 15 }}>
-              {subscription.price?.tier.name}
+              {subscription.tier?.name
+                ? subscription.tier?.name
+                : subscription.price?.tier.name}
             </SkModernistTitleText>
             <SkModernistText>Status: {subscription.status}</SkModernistText>
             <SkModernistText>
@@ -146,7 +179,7 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
             renderItem={({ item }) => <Item subscription={item} />}
           />
         ) : (
-          <View>
+          <View style={styles.infoContainer}>
             <SkModernistText>
               You currently have a free membership, upgrade to a paid
               subscription for full access.
@@ -158,12 +191,18 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
           style={{
             marginHorizontal: 30,
           }}>
-          <PrimaryBtn text="Log out" onPress={() => LogOut()} />
+          <PrimaryBtn text="Log out" onPress={() => logOut()} />
           <PrimaryBtn
             btnStyle={{ backgroundColor: UGTheme.colors.primaryBlue }}
             textStyle={{ color: UGTheme.colors.primary }}
             text="Contact support"
             onPress={() => handleEmail()}
+          />
+          <PrimaryBtn
+            btnStyle={{ backgroundColor: 'red' }}
+            textStyle={{ color: 'white' }}
+            text="Delete Account"
+            onPress={() => confirmDeleteAlert()}
           />
         </View>
       </View>

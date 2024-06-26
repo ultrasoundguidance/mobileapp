@@ -24,6 +24,14 @@
             "./assets/fonts/Sk-Modernist-Bold.otf"
           ]
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24
+          }
+        }
       ]
     ],
     "ios": {
