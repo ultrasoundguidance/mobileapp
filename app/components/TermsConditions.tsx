@@ -10,13 +10,15 @@ export default function TermsConditions() {
       <SkModernistText style={styles.terms}>
         By clicking “Sign Up” you agree to accept the{' '}
         <SkModernistText
-          onPress={() => openURL('https://www.ultrasoundguidance.com/plans/')}
+          onPress={() =>
+            openURL('https://www.ultrasoundguidance.com/terms-of-service/')
+          }
           style={{ textDecorationLine: 'underline', color: 'blue' }}>
           terms and conditions
         </SkModernistText>{' '}
         and{' '}
         <SkModernistText
-          onPress={() => openURL('https://www.ultrasoundguidance.com/plans/')}
+          onPress={() => openURL('https://www.ultrasoundguidance.com/privacy/')}
           style={{ textDecorationLine: 'underline', color: 'blue' }}>
           privacy policy
         </SkModernistText>
