@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
 import axios from 'axios'
 import { Image } from 'expo-image'
+import { openURL } from 'expo-linking'
 import React from 'react'
 import { StyleSheet, View, FlatList, Alert } from 'react-native'
 import email from 'react-native-email'
@@ -204,6 +205,17 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
             text="Delete Account"
             onPress={() => confirmDeleteAlert()}
           />
+          <SkModernistText style={styles.aboutUs}>
+            Learn more about the physicians who created this content{' '}
+            <SkModernistText
+              onPress={() =>
+                openURL('https://www.ultrasoundguidance.com/about/')
+              }
+              style={{ textDecorationLine: 'underline', color: 'blue' }}>
+              here
+            </SkModernistText>
+            .
+          </SkModernistText>
         </View>
       </View>
     </View>
@@ -236,5 +248,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     paddingBottom: 5,
+  },
+  aboutUs: {
+    marginVertical: 20,
   },
 })
