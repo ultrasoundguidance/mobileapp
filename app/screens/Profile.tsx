@@ -205,6 +205,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
             text="Delete Account"
             onPress={() => confirmDeleteAlert()}
           />
+        </View>
+        <View>
           <SkModernistText style={styles.aboutUs}>
             Learn more about the physicians who created this content{' '}
             <SkModernistText
@@ -215,6 +217,24 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
               here
             </SkModernistText>
             .
+          </SkModernistText>
+          <SkModernistText style={styles.termsAndPrivacy}>
+            View the{' '}
+            <SkModernistText
+              onPress={() =>
+                openURL('https://www.ultrasoundguidance.com/terms-of-service/')
+              }
+              style={{ textDecorationLine: 'underline', color: 'blue' }}>
+              Terms and Conditions
+            </SkModernistText>{' '}
+            and{' '}
+            <SkModernistText
+              onPress={() =>
+                openURL('https://www.ultrasoundguidance.com/privacy/')
+              }
+              style={{ textDecorationLine: 'underline', color: 'blue' }}>
+              Privacy Policy
+            </SkModernistText>
           </SkModernistText>
         </View>
       </View>
@@ -250,6 +270,9 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   aboutUs: {
-    marginVertical: 20,
+    marginTop: 20,
+  },
+  termsAndPrivacy: {
+    marginVertical: 10,
   },
 })
