@@ -93,7 +93,10 @@ function App() {
               appUserID: currentMember[0].stripeId,
             })
           } else if (Platform.OS === 'android') {
-            Purchases.configure({ apiKey: '' })
+            Purchases.configure({
+              apiKey: 'goog_kIDaGKXcivQMygxGkprcXfLfxXm',
+              appUserID: currentMember[0].stripeId,
+            })
           }
           Purchases.setAttributes({
             $email: currentMember[0].email,
