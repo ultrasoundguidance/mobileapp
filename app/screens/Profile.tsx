@@ -96,7 +96,7 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
 
   const handleEmail = () => {
     const to = ['team@ultrasoundguidance.com']
-    email(to).catch(console.error)
+    email(to, { checkCanOpen: false }).catch(console.error)
   }
 
   const deleteAccount = () => {
