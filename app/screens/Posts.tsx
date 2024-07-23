@@ -21,7 +21,7 @@ import { SkModernistText } from '../components/SkModernistText'
 import { SkModernistTitleText } from '../components/SkModernistTitleText'
 import { useUserContext } from '../contexts/AppContext'
 import { UGTheme } from '../styles/Theme'
-import { Lexical, PostData, Tag, WatchedVideo } from '../types/Posts'
+import { Lexical, MobileDoc, PostData, Tag, WatchedVideo } from '../types/Posts'
 
 interface PostProps {
   value: string
@@ -65,33 +65,73 @@ function PostsScreen({ navigation, route }: PostsScreenProp) {
       .then(async response => {
         const postData: PostProps[] = Object.values(
           response.data.reduce((accumulator: any, post: any) => {
+            let posts: any[] = []
             if (post.lexical) {
               const lexical: Lexical = JSON.parse(post.lexical)
-              post.tags.forEach((tag: Tag) => {
-                const postInfo = {
-                  id: post.id,
-                  title: post.title,
-                  posts: lexical.root.children,
-                  thumbNail:
-                    post.custom_excerpt ||
-                    require('../../assets/images/icon-dark.png'),
-                  tag,
-                  watchedVideos: [],
-                  videoCount: 0,
+              posts = lexical.root.children
+            } else {
+              const mobiledoc: MobileDoc = JSON.parse(post.mobiledoc)
+              const postChildren: any[] = []
+              mobiledoc.sections.forEach(section => {
+                if (section[1] === 'p') {
+                  postChildren.push({
+                    children: [
+                      {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: section[2][0][3],
+                        type: 'extended-text',
+                        version: 1,
+                      },
+                    ],
+                    direction: 'ltr',
+                    format: '',
+                    indent: 0,
+                    type: 'paragraph',
+                    version: 1,
+                  })
+                } else {
+                  postChildren.push({
+                    caption: '',
+                    embedType: 'video',
+                    html: mobiledoc.cards[section[1]][1].html,
+                    metadata: mobiledoc.cards[section[1]][1].metadata,
+                    type: 'embed',
+                    url: mobiledoc.cards[section[1]][1].url,
+                    version: 1,
+                  })
                 }
-                if (!tag.name.includes('#')) {
-                  if (accumulator[tag.name]) {
-                    accumulator[tag.name].data.push(postInfo)
-                  } else {
-                    accumulator[tag.name] = {
-                      value: tag.name,
-                      label: tag.name,
-                      data: [postInfo],
-                    }
-                  }
-                }
+
+                posts = postChildren
               })
             }
+
+            post.tags.forEach((tag: Tag) => {
+              const postInfo = {
+                id: post.id,
+                title: post.title,
+                posts,
+                thumbNail:
+                  post.custom_excerpt ||
+                  require('../../assets/images/icon-dark.png'),
+                tag,
+                watchedVideos: [],
+                videoCount: 0,
+              }
+              if (!tag.name.includes('#')) {
+                if (accumulator[tag.name]) {
+                  accumulator[tag.name].data.push(postInfo)
+                } else {
+                  accumulator[tag.name] = {
+                    value: tag.name,
+                    label: tag.name,
+                    data: [postInfo],
+                  }
+                }
+              }
+            })
 
             return accumulator
           }, {}),

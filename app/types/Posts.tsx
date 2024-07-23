@@ -19,6 +19,22 @@ export interface Lexical {
   root: Root
 }
 
+export interface MobileDoc {
+  version: string
+  atoms: any[]
+  cards: CardClass[][]
+  markups: any[]
+  sections: any[]
+  ghostVersion: string
+}
+
+export interface CardClass {
+  url: string
+  html: string
+  type: string
+  metadata: Metadata
+}
+
 export interface Root {
   children: RootChild[]
   direction: string
