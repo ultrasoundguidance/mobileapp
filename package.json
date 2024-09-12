@@ -16,9 +16,12 @@
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
     "axios": "^1.6.8",
-    "expo": "~51.0.9",
+    "expo": "^51.0.32",
+    "expo-application": "~5.9.1",
     "expo-av": "~14.0.5",
+    "expo-build-properties": "~0.12.3",
     "expo-dev-client": "~4.0.15",
+    "expo-device": "~6.0.2",
     "expo-image": "~1.12.9",
     "expo-linking": "~6.3.1",
     "expo-screen-orientation": "~7.0.5",
@@ -39,8 +42,7 @@
     "react-native-screens": "3.31.1",
     "react-native-vector-icons": "^10.0.3",
     "react-native-vimeo-iframe": "^1.2.1",
-    "react-native-webview": "13.8.6",
-    "expo-build-properties": "~0.12.3"
+    "react-native-webview": "13.8.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

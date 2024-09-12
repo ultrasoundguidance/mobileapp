@@ -75,37 +75,65 @@ function App() {
     }
   }
 
+  const validateDeviceId = async (email: string, deviceId: string) => {
+    let isValidDeviceId = false
+    try {
+      const response = await axios.post(`${UG_URL}/auth/validateDeviceId`, {
+        email,
+        deviceId,
+      })
+      if (response.status === 200) {
+        isValidDeviceId = true
+      }
+    } catch (error) {
+      console.log('Device ID not found: ', error)
+    }
+
+    return isValidDeviceId
+  }
+
   const getAuthenticated = async () => {
     try {
       const userInfo = await AsyncStorage.getItem('user_data')
       if (userInfo) {
         const info: MemberDetails = JSON.parse(userInfo)
-        // Get the most current user info
-        const currentMember: MemberDetails[] = await getUser(info.email)
-        currentMember[0].stripeId = await createStripeCustomer(
-          currentMember[0].email,
+        // Check if user has more than 2 devices logged in
+        const isValidDeviceId = await validateDeviceId(
+          info.email,
+          info.deviceId,
         )
-        if (currentMember[0].status === 'free') {
-          console.log('Setting Purchases information')
-          if (Platform.OS === 'ios') {
-            Purchases.configure({
-              apiKey: 'appl_HUYMIRUuPfqAivWjKidHSJVXxvf',
-              appUserID: currentMember[0].stripeId,
-            })
-          } else if (Platform.OS === 'android') {
-            Purchases.configure({
-              apiKey: 'goog_kIDaGKXcivQMygxGkprcXfLfxXm',
-              appUserID: currentMember[0].stripeId,
+
+        if (isValidDeviceId) {
+          // Get the most current user info
+          const currentMember: MemberDetails[] = await getUser(info.email)
+          currentMember[0].deviceId = info.deviceId
+          currentMember[0].stripeId = await createStripeCustomer(
+            currentMember[0].email,
+          )
+          if (currentMember[0].status === 'free') {
+            console.log('Setting Purchases information')
+            if (Platform.OS === 'ios') {
+              Purchases.configure({
+                apiKey: 'appl_HUYMIRUuPfqAivWjKidHSJVXxvf',
+                appUserID: currentMember[0].stripeId,
+              })
+            } else if (Platform.OS === 'android') {
+              Purchases.configure({
+                apiKey: 'goog_kIDaGKXcivQMygxGkprcXfLfxXm',
+                appUserID: currentMember[0].stripeId,
+              })
+            }
+            Purchases.setAttributes({
+              $email: currentMember[0].email,
+              $displayName: currentMember[0].name,
             })
           }
-          Purchases.setAttributes({
-            $email: currentMember[0].email,
-            $displayName: currentMember[0].name,
-          })
-        }
 
-        setUserData(currentMember[0])
-        setIsLoggedIn(true)
+          setUserData(currentMember[0])
+          setIsLoggedIn(true)
+        } else {
+          setIsLoggedIn(false)
+        }
       }
     } catch (error) {
       console.error(error)

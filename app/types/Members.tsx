@@ -20,6 +20,7 @@ export interface MemberDetails {
   email_suppression: EmailSuppression
   newsletters: Newsletter[]
   stripeId: string
+  deviceId: string
 }
 
 export interface EmailSuppression {

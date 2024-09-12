@@ -12,3 +12,7 @@ This app is build using [Expo](https://docs.expo.dev/). Normally you would be ab
 ## Deploying
 ### Internally for sharing
 - Make sure you're signed in and use `eas update` 
+
+### Production
+- First bump up the version number in app.json
+- Then, run `eas build` -> `eas submit`

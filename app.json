@@ -3,7 +3,7 @@
     "name": "Ultrasound Guidance",
     "slug": "ultrasound-guidance",
     "description": "Companion app for Ultrasound Guidance learning material",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/main-icon.png",
     "userInterfaceStyle": "light",

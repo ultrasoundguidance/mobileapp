@@ -1,5 +1,7 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import axios from 'axios'
+import * as Application from 'expo-application'
+import * as Device from 'expo-device'
 import React, { useState } from 'react'
 import {
   ActivityIndicator,
@@ -47,8 +49,30 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
       })
   }
 
+  async function setDeviceId(email: string) {
+    let deviceId: string | null = ''
+    if (Device.isDevice) {
+      if (Device.brand === 'google') {
+        deviceId = Application.getAndroidId()
+      } else {
+        deviceId = await Application.getIosIdForVendorAsync()
+      }
+    } else {
+      deviceId = 'simulator'
+    }
+
+    try {
+      await axios.post(`${UG_URL}/auth/mobileLogin`, {
+        email: email.toLowerCase(),
+        deviceId,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+    return deviceId
+  }
+
   const validateMembership = async (email: string) => {
-    setLoading(true)
     let memberInfo = undefined
     try {
       const response = await axios.post(`${UG_URL}/auth/validateMembership`, {
@@ -66,19 +90,22 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
     } catch (error) {
       console.log(error)
     }
-    setLoading(false)
     return memberInfo
   }
 
   const loginUser = async () => {
+    setLoading(true)
     if (email === '') {
       Alert.alert('Enter email', 'Email cannot be blank')
     } else {
       const memberInfo = await validateMembership(email)
       if (memberInfo?.name) {
+        const deviceId = await setDeviceId(email)
+        memberInfo.deviceId = deviceId
         sendEmailPasscode(email, memberInfo.name, memberInfo)
       }
     }
+    setLoading(false)
   }
 
   return (
