@@ -52,10 +52,12 @@ export default function EmailScreen({ navigation }: EmailScreenProp) {
   async function setDeviceId(email: string) {
     let deviceId: string | null = ''
     if (Device.isDevice) {
-      if (Device.brand === 'google') {
+      if (Device.brand === 'google' || Device.brand === 'xiaomi') {
         deviceId = Application.getAndroidId()
-      } else {
+      } else if (Device.brand === 'Apple') {
         deviceId = await Application.getIosIdForVendorAsync()
+      } else {
+        deviceId = 'unknown'
       }
     } else {
       deviceId = 'simulator'
