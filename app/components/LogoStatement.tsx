@@ -2,15 +2,15 @@ import { Image } from 'expo-image'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import { SkModernistTitleText } from './SkModernistTitleText'
+import { DefaultTitleText } from './DefaultTitleText'
 import { UGTheme } from '../styles/Theme'
 
 export default function LogoStatement() {
   const BlueText = () => {
     return (
-      <SkModernistTitleText style={styles.blueText}>
+      <DefaultTitleText style={styles.blueText}>
         of your hand
-      </SkModernistTitleText>
+      </DefaultTitleText>
     )
   }
 
@@ -22,9 +22,9 @@ export default function LogoStatement() {
         source={require('../../assets/images/icon.png')}
       />
       <View>
-        <SkModernistTitleText>
+        <DefaultTitleText>
           Ultrasound expertise in the palm {BlueText()}
-        </SkModernistTitleText>
+        </DefaultTitleText>
       </View>
     </View>
   )

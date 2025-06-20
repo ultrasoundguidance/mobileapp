@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from 'react-native'
 
-import { SkModernistTitleText } from './SkModernistTitleText'
+import { DefaultTitleText } from './DefaultTitleText'
 import { UGTheme } from '../styles/Theme'
 
 type PrimaryBtnProps = {
@@ -25,16 +25,17 @@ export default function PrimaryBtn(props: PrimaryBtnProps) {
     <TouchableOpacity
       style={[styles.btn, { backgroundColor: colors.primary }, props.btnStyle]}
       onPress={props.onPress}>
-      <SkModernistTitleText
+      <DefaultTitleText
         style={[
           {
             fontSize: 15,
+            fontWeight: 'bold',
             color: UGTheme.colors.primaryBlue,
           },
           props.textStyle,
         ]}>
         {props.text}
-      </SkModernistTitleText>
+      </DefaultTitleText>
     </TouchableOpacity>
   )
 }

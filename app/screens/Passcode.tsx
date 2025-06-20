@@ -17,15 +17,14 @@ import {
 import {
   CodeField,
   Cursor,
-  useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field'
 
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
+import { DefaultText } from '../components/DefaultText'
 import LogoStatement from '../components/LogoStatement'
 import PrimaryBtn from '../components/PrimaryBtn'
-import { SkModernistText } from '../components/SkModernistText'
 import { useUserContext } from '../contexts/AppContext'
 import { UGTheme } from '../styles/Theme'
 
@@ -37,7 +36,6 @@ export default function PasscodeScreen({ route }: PasscodeScreenProps) {
   const [loading, setLoading] = useState(false)
   const [value, setValue] = useState('')
   const { setIsLoggedIn, setUserData } = useUserContext()
-  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT })
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -95,7 +93,6 @@ export default function PasscodeScreen({ route }: PasscodeScreenProps) {
               </Text>
               <CodeField
                 rootStyle={{ paddingBottom: 20 }}
-                ref={ref}
                 {...props}
                 value={value}
                 onChangeText={setValue}
@@ -107,9 +104,9 @@ export default function PasscodeScreen({ route }: PasscodeScreenProps) {
                     onLayout={getCellOnLayoutHandler(index)}
                     key={index}
                     style={[styles.cellRoot, isFocused && styles.focusCell]}>
-                    <SkModernistText style={styles.cellText}>
+                    <DefaultText style={styles.cellText}>
                       {symbol || (isFocused ? <Cursor /> : null)}
-                    </SkModernistText>
+                    </DefaultText>
                   </View>
                 )}
               />

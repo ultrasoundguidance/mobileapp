@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
 import { Vimeo } from 'react-native-vimeo-iframe'
 
+import { DefaultText } from './DefaultText'
 import PrimaryBtn from './PrimaryBtn'
-import { SkModernistText } from './SkModernistText'
 import { UG_URL, FreeSampleVideoIds } from '../Constants'
 import { useUserContext } from '../contexts/AppContext'
 
@@ -75,7 +75,7 @@ const VideoItem = ({
   }
 
   return text ? (
-    <SkModernistText style={styles.text}>{text}</SkModernistText>
+    <DefaultText style={styles.text}>{text}</DefaultText>
   ) : (
     <View style={styles.container}>
       {userData?.status === 'free' ? (
@@ -98,10 +98,10 @@ const VideoItem = ({
                   alignItems: 'center',
                 },
               ]}>
-              <SkModernistText
+              <DefaultText
                 style={[styles.text, { fontWeight: 'bold', color: 'white' }]}>
                 This content is for subscribers only
-              </SkModernistText>
+              </DefaultText>
               <PrimaryBtn
                 text="Subscribe now"
                 onPress={() => presentPaywall()}

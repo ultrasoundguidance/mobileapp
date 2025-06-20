@@ -4,9 +4,9 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native'
 
 import { RootStackParamList } from '../../App'
+import { DefaultText } from '../components/DefaultText'
+import { DefaultTitleText } from '../components/DefaultTitleText'
 import PrimaryBtn from '../components/PrimaryBtn'
-import { SkModernistText } from '../components/SkModernistText'
-import { SkModernistTitleText } from '../components/SkModernistTitleText'
 import { useUserContext } from '../contexts/AppContext'
 
 export enum AtlasTypes {
@@ -27,15 +27,15 @@ export default function HomeScreen({ navigation }: HomeScreenProp) {
           contentFit="contain"
           source={require('../../assets/images/icon.png')}
         />
-        <SkModernistTitleText style={styles.header}>
+        <DefaultTitleText style={styles.header}>
           Welcome, {userData?.name.split(' ')[0]}!
-        </SkModernistTitleText>
+        </DefaultTitleText>
         {userData?.status === 'free' ? (
           <View>
-            <SkModernistText style={{ marginBottom: 10, fontSize: 15 }}>
+            <DefaultText style={{ marginBottom: 10, fontSize: 15 }}>
               To get started, check out sample videos here to get an idea of
               what we can offer you and your institution.{' '}
-            </SkModernistText>
+            </DefaultText>
             <PrimaryBtn
               text="Sample Videos"
               onPress={() => {

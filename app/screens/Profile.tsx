@@ -11,9 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
+import { DefaultText } from '../components/DefaultText'
+import { DefaultTitleText } from '../components/DefaultTitleText'
 import PrimaryBtn from '../components/PrimaryBtn'
-import { SkModernistText } from '../components/SkModernistText'
-import { SkModernistTitleText } from '../components/SkModernistTitleText'
 import { useUserContext } from '../contexts/AppContext'
 import { UGTheme } from '../styles/Theme'
 import { Subscription } from '../types/Members'
@@ -135,15 +135,15 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
       <View style={styles.infoContainer}>
         {userData ? (
           <View>
-            <SkModernistTitleText style={{ fontSize: 15 }}>
+            <DefaultTitleText style={{ fontSize: 15 }}>
               {subscription.tier?.name
                 ? subscription.tier?.name
                 : subscription.price?.tier.name}
-            </SkModernistTitleText>
-            <SkModernistText>Status: {subscription.status}</SkModernistText>
-            <SkModernistText>
+            </DefaultTitleText>
+            <DefaultText>Status: {subscription.status}</DefaultText>
+            <DefaultText>
               Start Date: {subscription.start_date.split('T')[0]}
-            </SkModernistText>
+            </DefaultText>
           </View>
         ) : (
           <View />
@@ -163,17 +163,15 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
       </SafeAreaView>
 
       <View style={{ paddingBottom: 10 }}>
-        <SkModernistText
+        <DefaultText
           style={{ lineHeight: 25, fontSize: 25, fontWeight: 'bold' }}>
           {userData?.name}
-        </SkModernistText>
-        <SkModernistText>{userData?.email}</SkModernistText>
+        </DefaultText>
+        <DefaultText>{userData?.email}</DefaultText>
       </View>
 
       <View style={{ flex: 1 }}>
-        <SkModernistText style={styles.subscriptions}>
-          Subscriptions:
-        </SkModernistText>
+        <DefaultText style={styles.subscriptions}>Subscriptions:</DefaultText>
         {userData?.status !== 'free' ? (
           <FlatList
             data={userData?.subscriptions}
@@ -181,10 +179,10 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
           />
         ) : (
           <View style={styles.infoContainer}>
-            <SkModernistText>
+            <DefaultText>
               You currently have a free membership, upgrade to a paid
               subscription for full access.
-            </SkModernistText>
+            </DefaultText>
             <PrimaryBtn text="View plans" onPress={() => presentPaywall()} />
           </View>
         )}
@@ -207,35 +205,35 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
           />
         </View>
         <View>
-          <SkModernistText style={styles.aboutUs}>
+          <DefaultText style={styles.aboutUs}>
             Learn more about the physicians who created this content{' '}
-            <SkModernistText
+            <DefaultText
               onPress={() =>
                 openURL('https://www.ultrasoundguidance.com/about/')
               }
               style={{ textDecorationLine: 'underline', color: 'blue' }}>
               here
-            </SkModernistText>
+            </DefaultText>
             .
-          </SkModernistText>
-          <SkModernistText style={styles.termsAndPrivacy}>
+          </DefaultText>
+          <DefaultText style={styles.termsAndPrivacy}>
             View the{' '}
-            <SkModernistText
+            <DefaultText
               onPress={() =>
                 openURL('https://www.ultrasoundguidance.com/terms-of-service/')
               }
               style={{ textDecorationLine: 'underline', color: 'blue' }}>
               Terms and Conditions
-            </SkModernistText>{' '}
+            </DefaultText>{' '}
             and{' '}
-            <SkModernistText
+            <DefaultText
               onPress={() =>
                 openURL('https://www.ultrasoundguidance.com/privacy/')
               }
               style={{ textDecorationLine: 'underline', color: 'blue' }}>
               Privacy Policy
-            </SkModernistText>
-          </SkModernistText>
+            </DefaultText>
+          </DefaultText>
         </View>
       </View>
     </View>

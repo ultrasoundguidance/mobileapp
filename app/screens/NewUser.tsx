@@ -16,9 +16,9 @@ import {
 
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
+import { DefaultText } from '../components/DefaultText'
 import LogoStatement from '../components/LogoStatement'
 import PrimaryBtn from '../components/PrimaryBtn'
-import { SkModernistText } from '../components/SkModernistText'
 import TermsConditions from '../components/TermsConditions'
 import { UGTheme } from '../styles/Theme'
 import { MemberDetails } from '../types/Members'
@@ -111,7 +111,7 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
               <LogoStatement />
-              <SkModernistText style={styles.header}>Name</SkModernistText>
+              <DefaultText style={styles.header}>Name</DefaultText>
               <TextInput
                 style={styles.input}
                 placeholder="Jamie Larson"
@@ -120,7 +120,7 @@ export default function NewUserScreen({ navigation }: NewUserScreenProp) {
                 }}
                 value={name}
               />
-              <SkModernistText style={styles.header}>Email</SkModernistText>
+              <DefaultText style={styles.header}>Email</DefaultText>
               <TextInput
                 autoCapitalize="none"
                 autoComplete="email"

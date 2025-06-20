@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextProps } from 'react-native'
 
 import { UGTheme } from '../styles/Theme'
 
-export const SkModernistTitleText = ({
+export const DefaultTitleText = ({
   children,
   style,
 }: React.PropsWithChildren<TextProps>) => {
@@ -16,7 +16,7 @@ export const SkModernistTitleText = ({
 const styles = StyleSheet.create({
   text: {
     lineHeight: 30,
-    fontFamily: 'Sk-Modernist-Bold',
+    fontWeight: 'bold',
     fontSize: 30,
   },
 })

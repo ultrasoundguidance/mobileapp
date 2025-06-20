@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, TextProps, StyleSheet } from 'react-native'
 
-export const SkModernistText = ({
+export const DefaultText = ({
   children,
   onPress,
   style,
@@ -16,6 +16,5 @@ export const SkModernistText = ({
 const styles = StyleSheet.create({
   text: {
     lineHeight: 20,
-    fontFamily: 'Sk-Modernist-Regular',
   },
 })

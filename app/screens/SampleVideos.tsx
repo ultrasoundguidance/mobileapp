@@ -3,7 +3,7 @@ import { Dimensions, SectionList, StyleSheet, View } from 'react-native'
 import { Vimeo } from 'react-native-vimeo-iframe'
 
 import { FreeSampleVideoIds } from '../Constants'
-import { SkModernistTitleText } from '../components/SkModernistTitleText'
+import { DefaultTitleText } from '../components/DefaultTitleText'
 
 export default function SampleVideosScree() {
   const FreeVideoSections = [
@@ -35,9 +35,9 @@ export default function SampleVideosScree() {
         renderItem={({ item }) => <Video videoId={item} />}
         stickySectionHeadersEnabled={false}
         renderSectionHeader={({ section: { title } }) => (
-          <SkModernistTitleText style={{ padding: 10, paddingTop: 10 }}>
+          <DefaultTitleText style={{ padding: 10, paddingTop: 10 }}>
             {title}
-          </SkModernistTitleText>
+          </DefaultTitleText>
         )}
       />
     </View>

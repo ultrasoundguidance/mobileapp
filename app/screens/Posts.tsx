@@ -17,8 +17,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { AtlasTypes } from './Home'
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
-import { SkModernistText } from '../components/SkModernistText'
-import { SkModernistTitleText } from '../components/SkModernistTitleText'
+import { DefaultText } from '../components/DefaultText'
+import { DefaultTitleText } from '../components/DefaultTitleText'
 import { useUserContext } from '../contexts/AppContext'
 import { UGTheme } from '../styles/Theme'
 import { Lexical, MobileDoc, PostData, Tag, WatchedVideo } from '../types/Posts'
@@ -231,10 +231,10 @@ function PostsScreen({ navigation, route }: PostsScreenProp) {
           styles.item,
           { backgroundColor: selected ? UGTheme.colors.primary : 'white' },
         ]}>
-        <SkModernistText
+        <DefaultText
           style={[styles.textItem, { color: selected ? 'white' : 'black' }]}>
           {item.label}
-        </SkModernistText>
+        </DefaultText>
       </View>
     )
   }
@@ -275,9 +275,9 @@ function PostsScreen({ navigation, route }: PostsScreenProp) {
               if (categories.includes(item.label) || categories.length === 0) {
                 return (
                   <View key={item.value}>
-                    <SkModernistTitleText style={styles.header}>
+                    <DefaultTitleText style={styles.header}>
                       {item.label}
-                    </SkModernistTitleText>
+                    </DefaultTitleText>
                     <View
                       style={[styles.contentWrapper, { width: screenWidth }]}>
                       {item.data.map(item => {
@@ -311,9 +311,9 @@ function PostsScreen({ navigation, route }: PostsScreenProp) {
                                 videoCount={item.videoCount}
                               />
                             </TouchableOpacity>
-                            <SkModernistText style={styles.title}>
+                            <DefaultText style={styles.title}>
                               {item.title}
-                            </SkModernistText>
+                            </DefaultText>
                           </View>
                         )
                       })}
@@ -365,6 +365,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 24,
     lineHeight: 24,
+    paddingTop: 8,
     paddingBottom: 25,
     color: UGTheme.colors.primary,
   },

@@ -6,7 +6,7 @@ import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui'
 
 import { RootStackParamList } from '../../App'
 import { UG_URL } from '../Constants'
-import { SkModernistTitleText } from '../components/SkModernistTitleText'
+import { DefaultTitleText } from '../components/DefaultTitleText'
 import VideoItem from '../components/VideoItem'
 import { useUserContext } from '../contexts/AppContext'
 
@@ -140,7 +140,7 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <SkModernistTitleText
+      <DefaultTitleText
         style={{
           textAlign: 'center',
           lineHeight: 25,
@@ -148,7 +148,7 @@ function VideoScreen({ navigation, route }: VideoScreenProps) {
           margin: 10,
         }}>
         {route.params.postTitle}
-      </SkModernistTitleText>
+      </DefaultTitleText>
       {loading ? (
         <Text>Loading</Text>
       ) : (
