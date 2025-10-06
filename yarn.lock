@@ -1543,10 +1543,22 @@
     color "^4.2.3"
     warn-once "^0.1.0"
 
-"@revenuecat/purchases-typescript-internal@13.37.0":
-  version "13.37.0"
-  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-13.37.0.tgz#8aa5ee664c86c73c424cf69e729d7917f3becc9f"
-  integrity sha512-2s10V0HA8ZaSVKZDKfZIO9E4dCTr8mCd2SLiNKEZfnaA/lASpixX5sJLOi8T/vCl4p4gQ5A3IzPHlQ6ySgg4Bg==
+"@revenuecat/purchases-js-hybrid-mappings@17.9.0":
+  version "17.9.0"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-js-hybrid-mappings/-/purchases-js-hybrid-mappings-17.9.0.tgz#c3119b875bd83527f430a020c99b628114d61217"
+  integrity sha512-JRrKG69T+OT0RYtQzeNi2DI/8EieEiqcvWcatZGOyjJva8AaOLbgI3jghC6xOoR7d9iSDm0pSwhGn9Ey/pzQRA==
+  dependencies:
+    "@revenuecat/purchases-js" "1.14.0"
+
+"@revenuecat/purchases-js@1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-js/-/purchases-js-1.14.0.tgz#df4af8d894f94a02fd31cebce0a57651f467d7aa"
+  integrity sha512-SotJ9MznBZoq91nSxLl1Oqw42k6A3JU0d73/WFbppv1IG770Q8KhuAUo1SgZC62ERCuCHme5fEdER1ZI4x8y7A==
+
+"@revenuecat/purchases-typescript-internal@17.9.0":
+  version "17.9.0"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-17.9.0.tgz#a311ef1cf8cd6f2fe64749c7482fbf6f87c94baf"
+  integrity sha512-w1y2HKJa/osHTn1j9lHILC0UT4BSXuNqBul4cnxIuxKupgZ3saO9Jg2cfyjkDLNc1jGwUbqDpfTii0KrkMiWwQ==
 
 "@rtsao/scc@^1.1.0":
   version "1.1.0"
@@ -5451,20 +5463,20 @@ react-native-is-edge-to-edge@1.1.7, react-native-is-edge-to-edge@^1.1.6, react-n
   resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.1.7.tgz#28947688f9fafd584e73a4f935ea9603bd9b1939"
   integrity sha512-EH6i7E8epJGIcu7KpfXYXiV2JFIYITtq+rVS8uEb+92naMRBdxhTuS8Wn2Q7j9sqyO0B+Xbaaf9VdipIAmGW4w==
 
-react-native-purchases-ui@^8.11.5:
-  version "8.11.5"
-  resolved "https://registry.yarnpkg.com/react-native-purchases-ui/-/react-native-purchases-ui-8.11.5.tgz#fa1ccad02c3491d3b7214836ce6f9162a1008e6d"
-  integrity sha512-av6QFYRjTLNpT7ps2bmwFZDBKHqJTKO0Ot0pp5hq80juXNaUVDt+iqo1mzpqVc/CMgL93KiXOO7ZI79ZZarjxw==
+react-native-purchases-ui@^9.5.3:
+  version "9.5.3"
+  resolved "https://registry.yarnpkg.com/react-native-purchases-ui/-/react-native-purchases-ui-9.5.3.tgz#12a09e99cca12e6cc3440f2fb0eb2362860ef790"
+  integrity sha512-2RLWjlgtLzyn6QjLzLdTNyySZZu+YCokiaMyLEfP6lf9UWIwZaq+umuDq24YJKvYCtEkbplu0/fjV4zo+4WXXw==
   dependencies:
-    "@revenuecat/purchases-typescript-internal" "13.37.0"
-    react-native-purchases "8.11.5"
+    "@revenuecat/purchases-typescript-internal" "17.9.0"
 
-react-native-purchases@8.11.5, react-native-purchases@^8.11.5:
-  version "8.11.5"
-  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-8.11.5.tgz#d74ec4fd6f4b136ba33648cb67d4d18bf44ecfcd"
-  integrity sha512-Q3UjVMmhTM/CoTH8fAy51fARRkeb1jnJ9E+Hmhw9UujjlNx8vCurgTtJRD+3yceIFlYpUsnHkKnWMk2Z9gJyDQ==
+react-native-purchases@^9.5.3:
+  version "9.5.3"
+  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-9.5.3.tgz#90819ea3147ed73377973fd1de06ccf08b284edd"
+  integrity sha512-SqQPBUEAyVmGoEWPWn571zBvpHBkPbvnRCRgVCT8jseKtVed5Xp5cVuHn1wIuSCJH/dOQK+dfrAFaOt30eB6Ow==
   dependencies:
-    "@revenuecat/purchases-typescript-internal" "13.37.0"
+    "@revenuecat/purchases-js-hybrid-mappings" "17.9.0"
+    "@revenuecat/purchases-typescript-internal" "17.9.0"
 
 react-native-reanimated@~3.17.4:
   version "3.17.5"
