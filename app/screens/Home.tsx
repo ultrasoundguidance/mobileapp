@@ -8,6 +8,7 @@ import { DefaultText } from '../components/DefaultText'
 import { DefaultTitleText } from '../components/DefaultTitleText'
 import PrimaryBtn from '../components/PrimaryBtn'
 import { useUserContext } from '../contexts/AppContext'
+import { useLogger } from '../util/remoteLogger'
 
 export enum AtlasTypes {
   diagnostic = 'Diagnostic Atlas',
@@ -18,6 +19,7 @@ type HomeScreenProp = BottomTabScreenProps<RootStackParamList, 'Home'>
 
 export default function HomeScreen({ navigation }: HomeScreenProp) {
   const { userData } = useUserContext()
+  const { logInfo } = useLogger()
 
   return (
     <View style={styles.container}>
@@ -42,6 +44,19 @@ export default function HomeScreen({ navigation }: HomeScreenProp) {
                 navigation.navigate('SampleVideos')
               }}
             />
+            <PrimaryBtn
+              text={"send message"}
+              onPress={() => {
+                logInfo('INFO', 'hello world')
+              }}
+            />
+            <PrimaryBtn
+              text={"ENV"}
+              onPress={() => {
+                logInfo("NODE ENV:", process.env.NODE_ENV)
+              }}
+            />
+            <DefaultText>This is Node ENV: {process.env.NODE_ENV}</DefaultText>
           </View>
         ) : (
           <View>

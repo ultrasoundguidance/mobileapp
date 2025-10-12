@@ -6,6 +6,7 @@ import { openURL } from 'expo-linking'
 import React from 'react'
 import { StyleSheet, View, FlatList, Alert } from 'react-native'
 import email from 'react-native-email'
+import Purchases from 'react-native-purchases'
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -17,10 +18,12 @@ import PrimaryBtn from '../components/PrimaryBtn'
 import { useUserContext } from '../contexts/AppContext'
 import { UGTheme } from '../styles/Theme'
 import { Subscription } from '../types/Members'
+import { useLogger } from '../util/remoteLogger'
 
 type ProfileScreenProp = BottomTabScreenProps<RootStackParamList, 'Profile'>
 
 export default function ProfileScreen({ navigation }: ProfileScreenProp) {
+  const { logInfo, logError } = useLogger()
   const { userData, setUserData, setIsLoggedIn } = useUserContext()
 
   async function addPurchase() {
@@ -64,25 +67,37 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
     userData!.status = 'active'
   }
 
-  async function presentPaywall(): Promise<boolean> {
-    const paywallResult: PAYWALL_RESULT = await RevenueCatUI.presentPaywall()
+  async function presentPaywall() {
+    const offerings = await Purchases.getOfferings()
+    logInfo('RC offering:', offerings.current?.identifier)
+    logInfo(
+      'RC packages:',
+      offerings.current?.availablePackages?.map(p => p.identifier),
+    )
 
-    switch (paywallResult) {
-      case PAYWALL_RESULT.NOT_PRESENTED:
-      case PAYWALL_RESULT.ERROR:
-      case PAYWALL_RESULT.CANCELLED:
-        return false
-      case PAYWALL_RESULT.PURCHASED:
-        await addPurchase()
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'HomeVideos' }],
-        })
-        return true
-      case PAYWALL_RESULT.RESTORED:
-        return true
-      default:
-        return false
+    try {
+      const paywallResult: PAYWALL_RESULT = await RevenueCatUI.presentPaywall()
+      logInfo('RC paywall result:', paywallResult)
+
+      switch (paywallResult) {
+        case PAYWALL_RESULT.NOT_PRESENTED:
+        case PAYWALL_RESULT.ERROR:
+        case PAYWALL_RESULT.CANCELLED:
+          return false
+        case PAYWALL_RESULT.PURCHASED:
+          await addPurchase()
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'HomeVideos' }],
+          })
+          return true
+        case PAYWALL_RESULT.RESTORED:
+          return true
+        default:
+          return false
+      }
+    } catch (error) {
+      logError('RC paywall error:', error)
     }
   }
 
@@ -183,7 +198,7 @@ export default function ProfileScreen({ navigation }: ProfileScreenProp) {
               You currently have a free membership, upgrade to a paid
               subscription for full access.
             </DefaultText>
-            <PrimaryBtn text="View plans" onPress={() => presentPaywall()} />
+            <PrimaryBtn text="View plans" onPress={presentPaywall} />
           </View>
         )}
         <View

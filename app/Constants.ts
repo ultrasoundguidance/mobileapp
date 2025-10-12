@@ -1,4 +1,5 @@
 // For local testing, use the following URL 'http://<IP ADDRESS>:5001/ultrasound-guidance/us-central1/ug'
+// Update your URL from 127.0.0.1 to 10.0.2.2 , which is a special alias to your [host loopback interface](https://developer.android.com/studio/run/emulator-networking#networkaddresses) for android emulators.
 export const UG_URL = 'https://ug-tjua6t7cwa-uc.a.run.app'
 
 export const FreeSampleVideoIds = [
