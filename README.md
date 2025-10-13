@@ -29,3 +29,4 @@ If you notice production builds don't have your latest changes, check these thin
   # Locally compile and run the ios app in release mode
   npx expo run:ios --configuration Release
 ```
+3. When testing an internal build, open link in web browser and select emulator to install app on

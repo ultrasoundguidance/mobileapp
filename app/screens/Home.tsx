@@ -42,7 +42,6 @@ export default function HomeScreen({ navigation }: HomeScreenProp) {
                 navigation.navigate('SampleVideos')
               }}
             />
-            <DefaultText>This is Node ENV: {process.env.NODE_ENV}</DefaultText>
           </View>
         ) : (
           <View>
