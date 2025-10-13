@@ -16,3 +16,16 @@ This app is build using [Expo](https://docs.expo.dev/). Normally you would be ab
 ### Production
 - First bump up the version number in app.json
 - Then, run `eas build` -> `eas submit`
+
+
+### Debugging Production Builds
+If you notice production builds don't have your latest changes, check these things:
+1. Ensure all the changes you want built have been committed.
+2. [Verify that your project builds and runs locally](https://docs.expo.dev/build-reference/troubleshooting/) (`process.env.NODE_ENV = production`)
+   ```
+  # Locally compile and run the Android app in release mode
+  npx expo run:android --variant release
+
+  # Locally compile and run the ios app in release mode
+  npx expo run:ios --configuration Release
+```
