@@ -23,7 +23,8 @@
             "minSdkVersion": 24
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "ios": {
       "supportsTablet": true,

@@ -23,7 +23,7 @@ sendRemoteLog('INFO', 'current ENV:', process.env.NODE_ENV)
 export const useLogger = () => {
   const logInfo = useCallback((message, data) => {
     console.log(message, data)
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'production') {
       sendRemoteLog('INFO', message, data)
     }
   }, [])
